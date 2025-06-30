@@ -21,10 +21,12 @@
 }
 
 #creative-footer {
-    padding: 3em 1.5em;
+    padding: 3em 0;
     position: relative;
     overflow: hidden;
-    font-family: 'Segoe UI', Roboto, sans-serif;
+       background-image:
+        linear-gradient(60deg, rgba(36, 23, 87, 0.9), rgba(10, 87, 97, 0.9)),
+        url(../images/bg.png);
 }
 
 .footer-container {
