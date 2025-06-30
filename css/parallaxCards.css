@@ -1,5 +1,3 @@
-
-
 #home {
   width: 100%;
 }
@@ -28,7 +26,7 @@
   aspect-ratio: 1 / 1;
   cursor: pointer;
   position: relative;
-  border-radius: 50%;
+  border-radius: 50%;  
 }
 
 .parallaxFlipping .flippingCard:nth-child(2) {
@@ -58,9 +56,12 @@
 } */
 
 @keyframes breathe {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(0.9);
   }
+
   50% {
     transform: scale(1);
   }
@@ -68,44 +69,53 @@
 
 
 @keyframes breathe2 {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
   }
+
   50% {
     transform: scale(0.9);
   }
 }
+
 .parallaxFlipping .flippingCard:nth-child(2):hover .cardItem {
   animation: none;
 }
 
 .parallaxFlipping .flippingCard:hover .cardItem {
   animation: none;
+
 }
 
 
-.parallaxFlipping .cardItem h1{
+.parallaxFlipping .cardItem h1 {
   font-size: 1.5em;
   line-height: 2em;
   letter-spacing: 0.5em;
 }
-.parallaxFlipping .cardItem h3{
+
+.parallaxFlipping .cardItem h3 {
   font-size: 1.5em;
   line-height: 2em;
   letter-spacing: 0.2em;
 }
 
-.parallaxFlipping .cardItem .cardItem-front i{
+.parallaxFlipping .cardItem .cardItem-front i {
   font-size: 3em;
+  color: rgb(23, 142, 197);
 }
 
-.parallaxFlipping .cardItem .cardItem-front{
-  color: rgb(255, 255, 255);
-  background-color: rgb(18, 37, 88);
+.parallaxFlipping .cardItem .cardItem-front {
+  color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(18, 37, 88, 0.98);
 }
 
-
-.parallaxFlipping .cardItem .cardItem-back li{
+.parallaxFlipping .cardItem .cardItem-back {
+  color: rgba(255, 255, 255, 0.1);
+}
+.parallaxFlipping .cardItem .cardItem-back li {
   font-size: 1.2em;
   line-height: 1.5em;
 }
@@ -118,15 +128,14 @@
   background-repeat: no-repeat;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
   border-radius: 50%;
-  transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+  transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1), color 3s ease-in-out;
   backface-visibility: hidden;
   width: 100%;
   height: 100%;
   position: absolute;
   top: 0;
   left: 0;
-  text-align: center;
-  color: #fff;
+  text-align: center;  
 }
 
 .parallaxFlipping .cardItem-front::after {
@@ -150,7 +159,8 @@
   transform: rotateY(180deg);
   transform-style: preserve-3d;
 }
-.parallaxFlipping .cardItem-back ul{
+
+.parallaxFlipping .cardItem-back ul {
   list-style: none;
 }
 
@@ -165,6 +175,7 @@
 
 .parallaxFlipping .cardItem:hover .cardItem-back {
   transform: rotateY(0deg);
+  color: rgba(255, 255, 255, 1.0);
 }
 
 .parallaxFlipping .cardItem-inner {

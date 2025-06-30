@@ -1,0 +1,8 @@
+# 1. 在项目目录创建虚拟环境（例如 icons 目录下）
+python3 -m venv venv-icons
+
+# 2. 激活虚拟环境
+source venv-icons/bin/activate
+
+# 3. 安装 Pillow
+pip install Pillow
