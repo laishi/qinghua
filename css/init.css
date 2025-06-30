@@ -1,6 +1,7 @@
 :root {
   --background-color: 222, 222, 222;
   --wave-color: 200, 222, 222;
+  --font-mono: 'Microsoft YaHei Mono', 'DengXian', 'Consolas', 'Menlo', 'SFMono-Regular', 'Courier New', monospace;
 }
 
 /* 系统深色模式优先级（自动适配） */
@@ -16,30 +17,15 @@
   box-sizing: border-box;
 }
 
-
 html {
   scroll-behavior: smooth;
 }
 
-/* 主体样式 */
 body,
 html {
   height: 100%;
   margin: 0;
   padding: 0;
   background-color: rgb(var(--background-color));
+  font-family: var(--font-mono);
 }
-
-/* body {
-  height: 100%;
-  font-size: 14px;
-  line-height: 1.7;
-  color: #666666;
-  -webkit-font-smoothing: antialiased;
-  -webkit-text-size-adjust: 100%;
-  background: #fff;
-  transition: all 0.3s linear;
-  -webkit-transition: all 0.3s linear;
-  -moz-transition: all 0.3s linear;
-  -o-transition: all 0.3s linear;
-} */
