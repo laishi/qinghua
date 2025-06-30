@@ -1,53 +1,77 @@
+:root {
+    --primary-color: #007BFF;
+    --highlight-color: rgba(255, 255, 255, 0.75);
+    --glow-color: rgba(0, 123, 255, 0.3);
+    --text-color: #1a1a1a;
+    --subtext-color: #4a4a4a;
+}
+
 .waveCopy {
     position: absolute;
     width: 100%;
     height: 25px;
     overflow: hidden;
     text-align: center;
-    /* background-color: green; */
     bottom: 0;
 }
-.waveCopy p{
-    color: #007bff;
+
+.waveCopy p {
+    color: var(--primary-color);
     line-height: 25px;
 }
 
-/* 创建渐变背景 */
 #creative-footer {
-    background: linear-gradient(135deg, #007bff, #00bcd4);
-    color: white;
-    padding: 0;
+    padding: 3em 1.5em;
     position: relative;
     overflow: hidden;
+    font-family: 'Segoe UI', Roboto, sans-serif;
 }
 
-/* 创建内嵌容器 */
 .footer-container {
-    width: 100%;
-    max-width: 80vh;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 100px 0;
-    padding-bottom: 150px;
 }
 
 .footer-content {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 30px;
+    gap: 2em;
+    margin-bottom: 5em;
+    margin-top: 2em;
 }
 
-/* 左侧内容 */
+.footer-left {
+    flex: 1 1 40%;
+    max-width: 400px;
+}
+
 .footer-left h4 {
-    font-size: 1.6em;
-    font-weight: bold;
-    margin-bottom: 20px;
+    font-size: 1.8em;
+    color: var(--text-color);
+    margin-bottom: 0.8em;
+    position: relative;
+}
+
+.footer-left h4::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: var(--primary-color);
+    transition: width 0.4s ease;
+}
+
+.footer-left h4:hover::after {
+    width: 100px;
 }
 
 .footer-left p {
-    font-size: 1em;
+    font-size: 1.1em;
+    color: var(--subtext-color);
     line-height: 1.6;
-    margin-bottom: 20px;
+    margin-bottom: 1.2em;
 }
 
 .footer-left ul {
@@ -55,65 +79,144 @@
     padding: 0;
 }
 
-.footer-left ul li {
-    font-size: 1.1em;
-    margin-bottom: 15px;
+.footer-left li {
+    font-size: 1em;
+    color: var(--subtext-color);
+    margin-bottom: 0.8em;
     display: flex;
     align-items: center;
-    transition: transform 0.3s ease;
 }
 
-/* 图标 */
-.footer-left ul li i {
-    font-size: 1.5em;
-    margin-right: 10px;
+.footer-left li i {
+    font-size: 1.2em;
+    color: var(--primary-color);
+    margin-right: 0.8em;
 }
 
-/* 鼠标悬停时添加动画 */
-.footer-left ul li:hover {
-    transform: translateX(10px);
+.footer-right {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.2em;
+    background-image: url('../images/icons/mstile-310x310.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
-/* 右侧内容 */
 .footer-right h4 {
-    font-size: 1.6em;
-    margin-bottom: 20px;
+    font-size: 1.8em;
+    color: var(--text-color);
+    margin-bottom: 1em;
+    grid-column: 1 / -1;
+    position: relative;
+}
+
+.footer-right h4::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 50px;
+    height: 2px;
+    background: var(--primary-color);
+    transition: width 0.4s ease;
+}
+
+.footer-right h4:hover::after {
+    width: 100px;
 }
 
 .footer-right ul {
     list-style: none;
     padding: 0;
+    display: contents;
 }
 
-.footer-right ul li {
-    margin-bottom: 15px;
-    font-size: 1.1em;
+.footer-right li {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    text-align: center;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08), inset 0 0 6px var(--highlight-color);
+    transition: transform 0.4s ease, box-shadow 0.4s ease, backdrop-filter 0.4s ease;
+    opacity: 0;
+    animation: waveIn 0.8s ease-out forwards;
 }
 
-.footer-right ul li a {
-    transition: all 0.3s ease;
-    color: white;
+.footer-right li:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.footer-right li:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.footer-right li:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.footer-right li:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+.footer-right li a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.2em;
     text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
     transition: color 0.3s ease;
 }
 
-/* 右侧链接的悬停效果 */
-.footer-right ul li a:hover {
-    font-size: 1.2em;
+.footer-right li:hover {
+    transform: scale(1.06);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12), inset 0 0 8px var(--highlight-color);
+    backdrop-filter: blur(12px);
 }
 
-/* 底部版权 */
+.footer-right li:hover a {
+    color: var(--primary-color);
+}
+
+.footer-right li i {
+    font-size: 2em;
+    color: var(--primary-color);
+    margin-bottom: 0.6em;
+    transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+.footer-right li:hover i {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 8px var(--glow-color));
+}
+
 .footer-bottom {
     text-align: center;
-    margin-top: 30px;
-    font-size: 1em;
-    color: #cccccc;
+    padding-top: 1.5em;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
 
+.footer-bottom p {
+    font-size: 0.9em;
+    color: var(--subtext-color);
+}
 
+@keyframes waveIn {
+    0% {
+        opacity: 0;
+        transform: translateY(15px);
+    }
 
-/* 响应式设计：调整布局 */
-@media (max-width: 768px) {
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 1024px) {
     .footer-content {
         flex-direction: column;
         align-items: center;
@@ -121,12 +224,51 @@
 
     .footer-left,
     .footer-right {
-        width: 100%;
+        flex: 1 1 100%;
+        max-width: 600px;
         text-align: center;
     }
 
-    .footer-left ul li,
-    .footer-right ul li {
-        font-size: 1em;
+    .footer-left li {
+        justify-content: center;
+    }
+
+    .footer-right {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    #creative-footer {
+        padding: 2.5em 1em;
+    }
+
+    .footer-right li a {
+        padding: 1em;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .footer-left h4,
+    .footer-right h4 {
+        font-size: 1.5em;
+    }
+
+    .footer-left p,
+    .footer-left li {
+        font-size: 0.95em;
+    }
+
+    .footer-right li a {
+        font-size: 0.9em;
+    }
+
+    .footer-right li i {
+        font-size: 1.8em;
+    }
+
+    .footer-bottom p {
+        font-size: 0.85em;
     }
 }

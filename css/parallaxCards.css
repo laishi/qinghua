@@ -91,25 +91,24 @@
 
 
 .parallaxFlipping .cardItem h1 {
-  font-size: 1.5em;
+  font-size: 2em;
   line-height: 2em;
   letter-spacing: 0.5em;
 }
 
 .parallaxFlipping .cardItem h3 {
   font-size: 1.5em;
-  line-height: 2em;
   letter-spacing: 0.2em;
 }
 
 .parallaxFlipping .cardItem .cardItem-front i {
-  font-size: 3em;
-  color: rgb(23, 142, 197);
+  font-size: 2.5em;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .parallaxFlipping .cardItem .cardItem-front {
   color: rgba(255, 255, 255, 0.5);
-  background-color: rgba(18, 37, 88, 0.98);
+  background-color: rgba(10, 100, 200, 0.98);
 }
 
 .parallaxFlipping .cardItem .cardItem-back {
@@ -150,7 +149,6 @@
   z-index: 1;
   backface-visibility: hidden;
 }
-
 
 
 .parallaxFlipping .cardItem-back {

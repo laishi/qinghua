@@ -112,26 +112,20 @@
 }
 
 
-.detailGrid:hover .gridInfo{
+.detailGrid:hover .gridInfo {
     bottom: 0;
     color: rgb(255, 255, 255);
 }
 
 
-.detailGrid .gridInfo:hover{
+.detailGrid .gridInfo:hover {
     background-color: rgba(0, 0, 0, 0.8);
     color: rgb(255, 255, 255);
-} 
+}
 
 .detailGrid .gridInfo .infoKeywords:hover {
     flex: 3;
 }
-
-
-
-
-
-
 
 
 
