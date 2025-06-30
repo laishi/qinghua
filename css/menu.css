@@ -1,5 +1,7 @@
 /* File: css/menu.css */
-
+:root {
+  --menu-height: 30vh;
+}
 
 .menu-content {
   position: absolute;
@@ -35,10 +37,11 @@
   align-items: center;
   height: 100%;
   overflow: hidden;
-  transition: flex 0.5s ease;
+  transition: flex 0.5s ease-in-out, opacity 0.3s ease-in-out, transform 0.5s ease-in-out;
   cursor: pointer;
   /* background: radial-gradient(circle at center, rgba(1, 54, 36, 0.1), rgba(0, 30, 20, 0.3)); */
-  perspective: 1000px
+  perspective: 1000px;
+  opacity: 0.5;
 }
 
 .menu-content .menus .menu .title {
@@ -48,7 +51,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  transition: all 0.5s ease;
+  transition: all 0.5s ease-in-out;
 }
 
 .menu-content .menus .menu .maintitle {
@@ -186,5 +189,6 @@
 }
 
 .menu-content .menus .menu:hover {
-  flex: 3;
+  flex: 1.5;
+  opacity: 0.9;  
 }

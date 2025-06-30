@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>可复用的视差函数</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        
+        /* 示例样式 - 可自定义 */
+        .parallax-section {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .parallax-bg {
+            position: absolute;
+            width: 110%;
+            height: 110%;
+            background-size: cover;
+            background-position: center;
+            will-change: transform;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .content {
+            position: relative;
+            z-index: 2;
+            color: white;
+            padding: 2rem;
+            background-color: rgba(0,0,0,0.5);
+        }
+        
+        /* 第二个示例的特殊样式 */
+        #section2 .parallax-bg {
+            filter: brightness(0.8);
+        }
+    </style>
+</head>
+<body>
+    <!-- 示例1 -->
+    <div class="parallax-section" id="section1">
+        <div class="parallax-bg" style="background-image: url('https://picsum.photos/1920/1080?random=1');"></div>
+        <div class="content">
+            <h1>第一区块</h1>
+            <p>移动鼠标查看视差效果</p>
+        </div>
+    </div>
+    
+    <!-- 示例2 -->
+    <div class="parallax-section" id="section2">
+        <div class="parallax-bg" style="background-image: url('https://picsum.photos/1920/1080?random=2');"></div>
+        <div class="content">
+            <h1>第二区块</h1>
+            <p>这个区块也有独立视差效果</p>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * 视差背景效果函数
+         * @param {HTMLElement} parallaxDiv - 需要添加视差的容器元素
+         * @param {Object} [options] - 配置选项
+         * @param {number} [options.intensity=0.1] - 视差强度 (0-1)
+         * @param {string} [options.bgSelector='.parallax-bg'] - 背景元素的选择器
+         */
+        function bgParallax(parallaxDiv, options = {}) {
+            // 合并默认配置
+            const config = {
+                intensity: 0.1,
+                bgSelector: '.parallax-bg',
+                ...options
+            };
+            
+            // 获取背景元素
+            const bg = parallaxDiv.querySelector(config.bgSelector);
+            if (!bg) {
+                console.error('未找到背景元素:', config.bgSelector);
+                return;
+            }
+            
+            // 计算最大移动范围
+            function getMaxMovement() {
+                const bgWidth = bg.offsetWidth;
+                const bgHeight = bg.offsetHeight;
+                const containerWidth = parallaxDiv.offsetWidth;
+                const containerHeight = parallaxDiv.offsetHeight;
+                
+                return {
+                    x: (bgWidth - containerWidth) / 2,
+                    y: (bgHeight - containerHeight) / 2
+                };
+            }
+            
+            // 视差效果
+            function handleMove(e) {
+                const max = getMaxMovement();
+                
+                // 获取鼠标位置 (兼容触摸事件)
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                
+                if (clientX === undefined || clientY === undefined) return;
+                
+                // 计算移动距离
+                const moveX = (clientX / window.innerWidth - 0.5) * 2 * max.x * config.intensity;
+                const moveY = (clientY / window.innerHeight - 0.5) * 2 * max.y * config.intensity;
+                
+                bg.style.transform = `translate(calc(-50% - ${moveX}px), calc(-50% - ${moveY}px))`;
+            }
+            
+            // 复位函数
+            function resetPosition() {
+                bg.style.transform = 'translate(-50%, -50%)';
+            }
+            
+            // 绑定事件
+            parallaxDiv.addEventListener('mousemove', handleMove);
+            parallaxDiv.addEventListener('touchmove', handleMove);
+            parallaxDiv.addEventListener('mouseleave', resetPosition);
+            parallaxDiv.addEventListener('touchend', resetPosition);
+            
+            // 返回清理函数
+            return function() {
+                parallaxDiv.removeEventListener('mousemove', handleMove);
+                parallaxDiv.removeEventListener('touchmove', handleMove);
+                parallaxDiv.removeEventListener('mouseleave', resetPosition);
+                parallaxDiv.removeEventListener('touchend', resetPosition);
+            };
+        }
+        
+        // 使用示例
+        document.addEventListener('DOMContentLoaded', function() {
+            // 应用到第一个区块
+            const cleanup1 = bgParallax(document.getElementById('section1'), {
+                intensity: 0.15
+            });
+            
+            // 应用到第二个区块 (更强的效果)
+            const cleanup2 = bgParallax(document.getElementById('section2'), {
+                intensity: 0.2,
+                bgSelector: '.parallax-bg' // 使用默认选择器
+            });
+            
+            // 如果需要停止视差效果
+            // window.setTimeout(() => cleanup1(), 5000); // 5秒后移除第一个区块的视差
+        });
+    </script>
+</body>
+</html>

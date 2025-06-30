@@ -1,11 +1,11 @@
 :root {
-  --wave-color-white1: 222, 222, 222;
+  --wave-color-white1: 200, 200, 200;
   --wave-color-white2: 233, 233, 233;
   --wave-color-white3: 244, 244, 222;
   --wave-color-white4: 255, 255, 255;
 
   --header-height: 80vh;
-  --menu-height: 38vh;
+  --log-size: 6em
 }
 
 
@@ -18,29 +18,44 @@
   position: relative;
   text-align: center;
   color: white;
-  background-image:
+  /* background-image:
     linear-gradient(60deg, rgba(36, 23, 87, 0.9), rgba(10, 87, 97, 0.9)),
-    url(../images/bg.png);
+    url(../images/bg.png); */
   background-size: cover;
   background-position: center;
   overflow: hidden;
 }
 
-
-.header-content .girl {
-  position: absolute;
-  bottom: 0;
-  width: 50%;
-  height: 50vh;
-  background-image: url(../images/girl.png);
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-
-  overflow: hidden;
+/* 视差背景 */
+.parallaxbg {
+    position: absolute;
+    width: 110%;
+    height: 110%;
+    background-size: cover;
+    background-position: center;
+    will-change: transform; /* 优化性能 */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease-out; /* 添加平滑过渡 */
+    background-image:
+        linear-gradient(60deg, rgba(36, 23, 87, 0.9), rgba(10, 87, 97, 0.9)),
+        url(../images/bg.png);
 }
 
-
+/* 前景人物 */
+.header-content .girl {
+    position: absolute;
+    bottom: 0;
+    width: 38%;
+    height: 38vh;
+    background-image: url(../images/girl.png);
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    will-change: transform; /* 优化性能 */
+    transition: transform 0.1s ease-out; /* 添加平滑过渡 */
+}
 
 
 
@@ -57,11 +72,10 @@
 }
 
 
-
 .header-content .header-title .headerLogo {
   position: absolute;
-  width: 10em;
-  height: 10em;
+  width: var(--log-size);
+  height: var(--log-size);
   top: 1em;
 }
 
@@ -73,17 +87,17 @@
 
 .header-content .header-title .headerText {
   position: absolute;
-  top: 12em;
+  top: 8em;
   text-align: center;
 }
 
 .header-content .header-title .headerText h1 {
-  font-size: 3em;
+  font-size: 2em;
   margin-bottom: 1em;
 }
 
 .header-content .header-title .headerText h3 {
-  font-size: 2em;
+  font-size: 1.5em;
   line-height: 1.5em;
 }
 
@@ -148,19 +162,6 @@
     margin-right: 0.5em;
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 .header-content .logo {
@@ -230,7 +231,7 @@
   animation-delay: -5s;
   animation-duration: 4s;
   /* 增加动画时长，降低动画速度 */
-  fill: rgba(var(--wave-color-white1), 1.0);
+  fill: rgba(var(--background-color), 1.0);
 }
 
 
