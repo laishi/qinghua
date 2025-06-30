@@ -27,7 +27,7 @@
 }
 
 /* 视差背景 */
-.parallaxbg {
+.header-content .parallaxbg {
     position: absolute;
     width: 110%;
     height: 110%;
@@ -43,6 +43,20 @@
         url(../images/bg.png);
 }
 
+.header-content .parallaxbg {
+  animation: lookatbg 2s ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-delay: -5s;
+  opacity: 0.9;
+  transform: translateY(1%);
+}
+
+/* @keyframes lookatbg {
+  to { transform: translateY(-1%); }
+} */
+
+
 /* 前景人物 */
 .header-content .girl {
     position: absolute;
@@ -57,7 +71,18 @@
     transition: transform 0.1s ease-out; /* 添加平滑过渡 */
 }
 
+.header-content .girl {
+  animation: girlLook 2s ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-delay: -5s;
+  opacity: 0.9;
+  transform: translateY(-3%);
+}
 
+@keyframes girlLook {
+  to { transform: translateY(3%); }
+}
 
 .header-content .header-title {
   position: absolute;
