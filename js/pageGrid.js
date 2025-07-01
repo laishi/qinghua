@@ -31,69 +31,83 @@ class SliderDetailGrid {
         this.currentActiveRow = null;
         this.perRow = this.calculatePerRow();
         this.isReturning = false;
+        this.ready = false;
+        this.state = 'list'; // 状态机：'list' | 'detail'
 
         this.init();
+    }
+
+    setState(newState, payload = {}) {
+        if (this.state === newState) return;
+        this.state = newState;
+        if (newState === 'list') {
+            this.pages.style.transform = 'translateX(0%)';
+            this.detailPage.style.transform = 'translate(0px, 0px)';
+            document.body.style.overflow = '';
+            this.detailPage.querySelector('#cicleloader-container')?.remove();
+            this.detailPage.querySelectorAll('.liquidGlass').forEach(el => el.remove());
+        } else if (newState === 'detail') {
+            const { linkurl } = payload;
+            this.pages.style.transform = 'translateX(-100%)';
+            this.detailPage.style.transform = 'translate(0px, 0px)';
+            document.body.style.overflow = 'hidden';
+            this.circleLoaderIframe(this.detailPage, linkurl);
+        }
     }
 
     init() {
         this.generateGrids();
         this.bindEvents();
+        this.ready = true;
+        this.checkURLAndLoadTemplate();
     }
 
     calculatePerRow() {
         return Math.min(Math.max(Math.floor(this.detailGridsContainer.clientWidth / 300), 2), 5);
     }
 
+    checkURLAndLoadTemplate() {
+        const params = new URLSearchParams(location.search);
+        const index = parseInt(params.get('template'), 10);
+        if (!isNaN(index) && location.hash === '#detailpage') {
+            const linkurl = `${this.tempPath}${this.templateFolders[index]}/index.html`;
+            requestAnimationFrame(() => {
+                if (!this.ready) return;
+                this.setState('detail', { linkurl });
+            });
+        } else {
+            this.setState('list');
+        }
+    }
+
     circleLoaderIframe(appenddiv, src) {
         if (!(appenddiv instanceof HTMLElement)) throw new Error('appenddiv 必须是有效的 DOM 元素');
 
-        console.log(`尝试加载 iframe: ${src}`);
         appenddiv.querySelectorAll('.liquidGlass, #cicleloader-container').forEach(el => el.remove());
 
-        const container = document.createElement('div');
-        container.id = 'cicleloader-container';
-        appenddiv.appendChild(container);
-
-        const rippleLoader = document.createElement('div');
-        rippleLoader.className = 'ripple-loader';
-
-        const bubbleLoader = document.createElement('div');
-        bubbleLoader.className = 'bubble-loader';
-
-        const loadingText = document.createElement('div');
-        loadingText.className = 'loading-text';
-        loadingText.textContent = '加载中';
-
-        const backText = document.createElement('h3');
-        backText.className = 'btnText';
-        backText.innerHTML = '返回';
-
-        const iframe = document.createElement('iframe');
-        iframe.src = src;
+        const container = Object.assign(document.createElement('div'), { id: 'cicleloader-container' });
+        const rippleLoader = Object.assign(document.createElement('div'), { className: 'ripple-loader' });
+        const bubbleLoader = Object.assign(document.createElement('div'), { className: 'bubble-loader' });
+        const loadingText = Object.assign(document.createElement('div'), { className: 'loading-text', textContent: '加载中' });
+        const backText = Object.assign(document.createElement('h3'), { className: 'btnText', innerHTML: '返回' });
+        const iframe = Object.assign(document.createElement('iframe'), { src });
 
         bubbleLoader.appendChild(loadingText);
-        container.appendChild(rippleLoader);
-        container.appendChild(bubbleLoader);
-        container.appendChild(iframe);
+        container.append(rippleLoader, bubbleLoader, iframe);
+        appenddiv.appendChild(container);
 
         bubbleLoader.addEventListener('click', () => {
             if (this.isReturning) return;
             this.isReturning = true;
-            console.log('返回按钮点击，恢复页面状态');
-            this.pages.style.transform = 'translateX(0%)';
-            this.detailPage.style.transform = 'translate(0px, 0px)';
-            document.body.style.overflow = '';
+            this.setState('list');
             container.remove();
-            const onTransitionEnd = () => {
+            this.pages.addEventListener('transitionend', () => {
                 history.back();
-                this.pages.removeEventListener('transitionend', onTransitionEnd);
                 this.isReturning = false;
-            };
-            this.pages.addEventListener('transitionend', onTransitionEnd);
+            }, { once: true });
         });
 
         iframe.addEventListener('load', () => {
-            console.log(`iframe 加载完成: ${src}`);
             rippleLoader.classList.add('active');
             iframe.classList.add('loaded');
             rippleLoader.addEventListener('animationend', () => {
@@ -107,7 +121,6 @@ class SliderDetailGrid {
 
         setTimeout(() => {
             if (!container.classList.contains('loaded')) {
-                console.warn(`iframe 加载超时，强制显示: ${src}`);
                 container.classList.add('loaded');
                 rippleLoader.classList.add('active');
                 iframe.classList.add('loaded');
@@ -121,7 +134,6 @@ class SliderDetailGrid {
         }, 5000);
 
         iframe.addEventListener('error', () => {
-            console.error(`iframe 加载失败: ${src}`);
             container.style.background = 'radial-gradient(circle, #ff4d4d, #b32424)';
             container.innerHTML = `<div class="error-text">加载失败: ${src}</div>`;
         });
@@ -141,8 +153,7 @@ class SliderDetailGrid {
             }));
         });
 
-        grid.appendChild(link);
-        grid.appendChild(gridInfo);
+        grid.append(link, gridInfo);
     }
 
     generateGrids() {
@@ -153,13 +164,12 @@ class SliderDetailGrid {
 
         let count = 1;
         for (let i = 0; i < Math.ceil(totalGrids / this.perRow); i++) {
-            const row = document.createElement('div');
-            row.className = 'gridsrow';
-
+            const row = Object.assign(document.createElement('div'), { className: 'gridsrow' });
             for (let j = 0; j < this.perRow && count <= totalGrids; j++, count++) {
-                const grid = document.createElement('div');
-                grid.className = 'detailGrid';
-                grid.style.height = `${gridWidth * this.gridAspectRatio}px`;
+                const grid = Object.assign(document.createElement('div'), {
+                    className: 'detailGrid',
+                    style: `height: ${gridWidth * this.gridAspectRatio}px`
+                });
 
                 if (count === totalGrids) {
                     grid.classList.add('enddetailGrid');
@@ -184,20 +194,18 @@ class SliderDetailGrid {
         this.detailGridsContainer.addEventListener('click', e => {
             const grid = e.target.closest('.detailGrid');
             if (!grid || grid.classList.contains('enddetailGrid')) return;
+
             const row = grid.closest('.gridsrow');
             const rowIndex = Array.from(this.detailGridsContainer.children).indexOf(row);
             const gridIndex = Array.from(row.children).indexOf(grid);
             const index = rowIndex * this.perRow + gridIndex;
             const linkurl = `${this.tempPath}${this.templateFolders[index]}/index.html`;
 
-            const onTransitionEnd = () => {
-                this.circleLoaderIframe(this.detailPage, linkurl);
-                this.detailPage.removeEventListener('transitionend', onTransitionEnd);
-            };
+            history.pushState({ index }, '', `?template=${index}#detailpage`);
+            this.setState('detail', { linkurl });
 
-            this.detailPage.addEventListener('transitionend', onTransitionEnd);
+            // 动画
             this.sliding(e.clientX, index);
-            document.body.style.overflow = 'hidden';
         });
 
         this.detailGridsContainer.addEventListener('mouseover', e => {
@@ -218,16 +226,19 @@ class SliderDetailGrid {
             this.perRow = this.calculatePerRow();
             this.generateGrids();
         });
-        window.addEventListener('popstate', () => {
-            if (location.hash !== '#detailpage') {
-                console.log('popstate 触发，恢复页面状态');
-                this.pages.style.transform = 'translateX(0%)';
-                this.detailPage.style.transform = 'translate(0px, 0px)';
-                document.body.style.overflow = '';
-                const container = this.detailPage.querySelector('#cicleloader-container');
-                if (container) container.remove();
-                this.detailPage.querySelectorAll('.liquidGlass').forEach(el => el.remove());
+
+        window.addEventListener('popstate', (e) => {
+            const index = e.state?.index;
+            if (!location.hash || location.hash !== '#detailpage') {
+                this.setState('list');
+            } else if (!isNaN(index)) {
+                const linkurl = `${this.tempPath}${this.templateFolders[index]}/index.html`;
+                this.setState('detail', { linkurl });
             }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            this.checkURLAndLoadTemplate();
         });
     }
 
@@ -239,7 +250,6 @@ class SliderDetailGrid {
 
         this.detailPageScroll(moveDirection === 'left' ? '100%' : '-100%');
         this.pages.style.transform = `translateX(${moveDirection === 'left' ? '-100%' : '100%'})`;
-        history.pushState(null, '', '#detailpage');
     }
 
     detailPageScroll(x = '0px', y = `${window.scrollY}px`) {

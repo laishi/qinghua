@@ -3,7 +3,7 @@
     --bubble-color-start: #4dabf7;
     --bubble-color-end: #1c7cd6;
     --breathe-duration: 2s;
-    --ripple-duration: 1.2s;
+    --ripple-duration: 1.5s;
     --text-fade-duration: 0.5s;
     --move-duration: 0.5s;
     --easing: cubic-bezier(0.4, 0, 0.6, 1);
@@ -31,7 +31,7 @@
     top: 0;
     width: 100%;
     height: 100vh;
-    background-color: rgba(255, 0, 0, 0);
+    background-color: var(--bubble-color-end);
     transition: transform 0.5s;
     z-index: -1;
     cursor: pointer;
@@ -181,8 +181,8 @@
 #cicleloader-container iframe.loaded {
     opacity: 1;
     filter: blur(0);
-    -webkit-clip-path: circle(150vmax at 50% 50%);
-    clip-path: circle(150vmax at 50% 50%);
+    -webkit-clip-path: circle(100vmax at 50% 50%);
+    clip-path: circle(100vmax at 50% 50%);
 }
 
 #cicleloader-container .ripple-loader {
@@ -227,8 +227,8 @@
     animation: move-to-corner var(--move-duration) var(--easing) forwards, liquidGlassBreathe 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     pointer-events: auto;
     cursor: pointer;
-    width: 4.5em;
-    height: 4.5em;
+    width: 5em;
+    height: 5em;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
     -webkit-backdrop-filter: blur(15px) saturate(200%);
     backdrop-filter: blur(15px) saturate(200%);
@@ -288,25 +288,28 @@
 }
 
 @keyframes ripple-loader {
-    0% {
-        transform: translate(-50%, -50%) scale(0);
-        opacity: 0.7;
-    }
-    25% {
-        transform: translate(-50%, -50%) scale(25);
-        opacity: 0.7;
-    }
-    100% {
-        transform: translate(-50%, -50%) scale(40);
-        opacity: 0;
-    }
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.7;
+  }
+
+  100% {
+    transform: translate(-50%, -50%) scale(5);
+    width: 100vmax;
+    height: 100vmax;
+    opacity: 0;
+  }
 }
 
+
 @keyframes breathe-loader {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translate(-50%, -50%) scale(1);
         opacity: 0.8;
     }
+
     50% {
         transform: translate(-50%, -50%) scale(1.3);
         opacity: 1;
@@ -314,10 +317,13 @@
 }
 
 @keyframes breathe-text {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1.1);
         opacity: 1;
     }
+
     50% {
         transform: scale(0.7);
         opacity: 0.7;
@@ -325,7 +331,9 @@
 }
 
 @keyframes fadeIn {
-    to { opacity: 1; }
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes move-to-corner {
@@ -334,6 +342,7 @@
         left: 50%;
         transform: translate(-50%, -50%) scale(1);
     }
+
     100% {
         top: 20%;
         left: 20%;
@@ -350,6 +359,7 @@
             0 0 20px rgba(255, 255, 255, 0.1);
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
     }
+
     50% {
         transform: translate(-50%, -50%) scale(1.03);
         box-shadow:
@@ -358,6 +368,7 @@
             0 0 28px rgba(255, 255, 255, 0.15);
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), rgba(255, 255, 255, 0.08));
     }
+
     100% {
         transform: translate(-50%, -50%) scale(1);
         box-shadow:
