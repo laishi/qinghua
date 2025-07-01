@@ -95,10 +95,13 @@ class SliderDetailGrid {
         iframe.addEventListener('load', () => {
             console.log(`iframe 加载完成: ${src}`);
             rippleLoader.classList.add('active');
+            bubbleLoader.classList.add('active'); // 触发 bubble-loader 动画
+            loadingText.classList.add('active'); // 触发 loadingText 动画
             rippleLoader.addEventListener('animationend', () => {
                 container.classList.add('loaded');
                 rippleLoader.remove();
                 loadingText.remove();
+                bubbleLoader.classList.remove('active'); // 停止呼吸动画
                 bubbleLoader.classList.add('loaded');
                 bubbleLoader.appendChild(backText);
             }, { once: true });
@@ -110,11 +113,17 @@ class SliderDetailGrid {
             if (!container.classList.contains('loaded')) {
                 console.warn(`iframe 加载超时，强制显示: ${src}`);
                 container.classList.add('loaded');
-                rippleLoader.remove();
-                loadingText.remove();
-                bubbleLoader.classList.add('loaded');
-                bubbleLoader.appendChild(backText);
-                iframe.classList.add('loaded');
+                rippleLoader.classList.add('active');
+                bubbleLoader.classList.add('active');
+                loadingText.classList.add('active');
+                setTimeout(() => {
+                    rippleLoader.remove();
+                    loadingText.remove();
+                    bubbleLoader.classList.remove('active');
+                    bubbleLoader.classList.add('loaded');
+                    bubbleLoader.appendChild(backText);
+                    iframe.classList.add('loaded');
+                }, 100); // 短暂延迟确保动画触发
             }
         }, 5000);
 

@@ -1,5 +1,5 @@
 :root {
-    --bubble-size: 7em;
+    --bubble-size: 5em;
     --bubble-color-start: #4dabf7;
     --bubble-color-end: #1c7cd6;
     --breathe-duration: 2s;
@@ -214,13 +214,17 @@
     background: radial-gradient(circle, var(--bubble-color-start), var(--bubble-color-end));
     border-radius: 50%;
     transform: translate(-50%, -50%) scale(1);
-    animation: breathe-loader var(--breathe-duration) var(--easing) infinite;
+    animation: none; /* 初始无动画，等待 active */
     filter: drop-shadow(0 0 15px rgba(29, 124, 214, 0.5));
     z-index: 1001;
     pointer-events: none;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+#cicleloader-container .bubble-loader.active {
+    animation: breathe-loader var(--breathe-duration) var(--easing) infinite;
 }
 
 #cicleloader-container .bubble-loader.loaded {
@@ -267,6 +271,10 @@
     pointer-events: none;
     opacity: 1;
     transform: scale(1);
+    animation: none; /* 初始无动画，等待 active */
+}
+
+#cicleloader-container .loading-text.active {
     animation: breathe-text var(--breathe-duration) var(--easing) infinite;
 }
 
@@ -308,18 +316,18 @@
         opacity: 0.9;
     }
     50% {
-        transform: translate(-50%, -50%) scale(1.2); /* 放大 */
+        transform: translate(-50%, -50%) scale(1.2);
         opacity: 1;
     }
 }
 
 @keyframes breathe-text {
     0%, 100% {
-        transform: scale(1.2); /* 反向：bubble-loader 小时变大 */
+        transform: scale(1.2);
         opacity: 1;
     }
     50% {
-        transform: scale(0.8); /* 反向：bubble-loader 大时变小 */
+        transform: scale(0.8);
         opacity: 0.8;
     }
 }
