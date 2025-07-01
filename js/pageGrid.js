@@ -113,10 +113,13 @@ class SliderDetailGrid {
         const iframe = document.createElement('iframe');
         iframe.src = src;
 
+        const backText = document.createElement('h3');
+        backText.className = 'btnText';
+        backText.innerHTML = '返回';
         const backButton = document.createElement('div');
         backButton.className = 'liquidGlass hidden';
-        backButton.innerHTML = '返回';
         backButton.style.cursor = 'pointer';
+        backButton.appendChild(backText)
 
         backButton.addEventListener('click', () => {
             if (this.isReturning) return;
