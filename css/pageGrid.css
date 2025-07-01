@@ -214,7 +214,7 @@
     background: radial-gradient(circle, var(--bubble-color-start), var(--bubble-color-end));
     border-radius: 50%;
     transform: translate(-50%, -50%) scale(1);
-    animation: breathe-loader var(--breathe-duration) var(--easing) infinite; /* 立即开始呼吸动画 */
+    animation: breathe-loader var(--breathe-duration) var(--easing) infinite;
     filter: drop-shadow(0 0 15px rgba(29, 124, 214, 0.5));
     z-index: 1001;
     pointer-events: none;
@@ -267,7 +267,7 @@
     pointer-events: none;
     opacity: 1;
     transform: scale(1);
-    animation: breathe-text var(--breathe-duration) var(--easing) infinite; /* 立即开始呼吸动画 */
+    animation: breathe-text var(--breathe-duration) var(--easing) infinite;
 }
 
 #cicleloader-container .loaded .loading-text {
