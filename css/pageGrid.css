@@ -1,12 +1,13 @@
 :root {
-    --bubble-size: 50px;
+    --bubble-size: 7em;
     --bubble-color-start: #4dabf7;
     --bubble-color-end: #1c7cd6;
     --breathe-duration: 2s;
-    --ripple-duration: 1s;
+    --ripple-duration: 1.2s;
     --text-fade-duration: 0.5s;
+    --move-duration: 0.5s;
     --easing: cubic-bezier(0.4, 0, 0.6, 1);
-    --ripple-easing: cubic-bezier(0.4, 0, 0.2, 1);
+    --ripple-easing: cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .pages-content {
@@ -152,10 +153,13 @@
 }
 
 #cicleloader-container {
-    position: relative;
-    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
     height: 100vh;
-    will-change: transform;
+    overflow: hidden;
+    z-index: 998;
 }
 
 #cicleloader-container iframe {
@@ -166,56 +170,109 @@
     height: 100%;
     border: none;
     z-index: 999;
-    display: none;
-    clip-path: url(#circleClip);
     opacity: 0;
-    transition: opacity var(--ripple-duration) var(--ripple-easing), filter 0.5s ease;
+    transition: opacity var(--ripple-duration) var(--ripple-easing), filter 0.5s ease, -webkit-clip-path var(--ripple-duration) var(--ripple-easing), clip-path var(--ripple-duration) var(--ripple-easing);
     filter: blur(5px);
-    will-change: opacity, filter;
+    will-change: opacity, filter, clip-path;
+    -webkit-clip-path: circle(var(--bubble-size) at 50% 50%);
+    clip-path: circle(var(--bubble-size) at 50% 50%);
 }
 
 #cicleloader-container iframe.loaded {
-    display: block;
     opacity: 1;
     filter: blur(0);
+    -webkit-clip-path: circle(150vmax at 50% 50%);
+    clip-path: circle(150vmax at 50% 50%);
 }
 
-#cicleloader-container svg.circleloader {
+#cicleloader-container .ripple-loader {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 50%;
+    left: 50%;
+    width: var(--bubble-size);
+    height: var(--bubble-size);
+    background: radial-gradient(circle, transparent 30%, var(--bubble-color-start) 60%, var(--bubble-color-end) 100%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.7;
     z-index: 1000;
     pointer-events: none;
+    animation: none;
+    transform-origin: 50% 50%;
+}
+
+#cicleloader-container .ripple-loader.active {
+    animation: ripple-loader var(--ripple-duration) var(--ripple-easing) forwards;
 }
 
 #cicleloader-container .bubble-loader {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: var(--bubble-size);
+    height: var(--bubble-size);
+    background: radial-gradient(circle, var(--bubble-color-start), var(--bubble-color-end));
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(1);
     animation: breathe-loader var(--breathe-duration) var(--easing) infinite;
     filter: drop-shadow(0 0 15px rgba(29, 124, 214, 0.5));
-    will-change: r, opacity;
+    z-index: 1001;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-#cicleloader-container .loaded .bubble-loader {
-    display: none;
+#cicleloader-container .bubble-loader.loaded {
+    animation: move-to-corner var(--move-duration) var(--easing) forwards, liquidGlassBreathe 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    pointer-events: auto;
+    cursor: pointer;
+    width: 4.5em;
+    height: 4.5em;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
+    -webkit-backdrop-filter: blur(15px) saturate(200%);
+    backdrop-filter: blur(15px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow:
+        inset 0 2px 8px rgba(255, 255, 255, 0.15),
+        0 4px 12px rgba(0, 0, 0, 0.15),
+        0 0 20px rgba(255, 255, 255, 0.1);
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
-#cicleloader-container .clip-circle {
-    r: var(--bubble-size);
+#cicleloader-container .bubble-loader .btnText {
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 1.1em;
+    font-weight: 500;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-#cicleloader-container .loaded .clip-circle {
-    animation: ripple-loader var(--ripple-duration) var(--ripple-easing) forwards;
-    will-change: r;
+#cicleloader-container .bubble-loader:hover {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+    -webkit-backdrop-filter: blur(15px) saturate(200%);
+    backdrop-filter: blur(15px) saturate(200%);
+    box-shadow:
+        inset 0 2px 8px rgba(255, 255, 255, 0.2),
+        0 6px 16px rgba(0, 0, 0, 0.2),
+        0 0 24px rgba(255, 255, 255, 0.15);
 }
 
 #cicleloader-container .loading-text {
-    transition: opacity var(--text-fade-duration) ease;
-    will-change: opacity;
+    position: relative;
+    color: white;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    z-index: 1002;
+    pointer-events: none;
+    opacity: 1;
+    transform: scale(1);
+    animation: breathe-text var(--breathe-duration) var(--easing) infinite;
 }
 
 #cicleloader-container .loaded .loading-text {
     opacity: 0;
+    animation: none;
 }
 
 #cicleloader-container .error-text {
@@ -230,64 +287,58 @@
     animation: fadeIn 0.5s ease forwards;
 }
 
-.liquidGlass {
-    position: absolute;
-    width: 4.5em;
-    height: 4.5em;
-    top: 20%;
-    left: 20%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-weight: 500;
-    font-size: 1.1em;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    border-radius: 50%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
-    backdrop-filter: blur(15px) saturate(200%);
-    -webkit-backdrop-filter: blur(15px) saturate(200%);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow:
-        inset 0 2px 8px rgba(255, 255, 255, 0.15),
-        0 4px 12px rgba(0, 0, 0, 0.15),
-        0 0 20px rgba(255, 255, 255, 0.1);
-    transform: translate(-50%, -50%);
-    z-index: 1000;
-    color: #fff;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
-    animation: liquidGlassBreathe 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-    will-change: transform, box-shadow, background;
-    transition: background 0.3s ease;
-}
-
-.liquidGlass h3{
-    color: black;
-}
-
-.liquidGlass:hover {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
-    box-shadow:
-        inset 0 2px 8px rgba(255, 255, 255, 0.2),
-        0 6px 16px rgba(0, 0, 0, 0.2),
-        0 0 24px rgba(255, 255, 255, 0.15);
-}
-
-.liquidGlass.hidden {
-    display: none;
+@keyframes ripple-loader {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0.7;
+    }
+    25% {
+        transform: translate(-50%, -50%) scale(25);
+        opacity: 0.7;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(40);
+        opacity: 0;
+    }
 }
 
 @keyframes breathe-loader {
-    0%, 100% { r: var(--bubble-size); opacity: 0.9; }
-    50% { r: calc(var(--bubble-size) * 1.2); opacity: 1; }
+    0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.9;
+    }
+    50% {
+        transform: translate(-50%, -50%) scale(1.2); /* 放大 */
+        opacity: 1;
+    }
 }
 
-@keyframes ripple-loader {
-    0% { r: var(--bubble-size); }
-    100% { r: 150vmax; }
+@keyframes breathe-text {
+    0%, 100% {
+        transform: scale(1.2); /* 反向：bubble-loader 小时变大 */
+        opacity: 1;
+    }
+    50% {
+        transform: scale(0.8); /* 反向：bubble-loader 大时变小 */
+        opacity: 0.8;
+    }
 }
 
 @keyframes fadeIn {
     to { opacity: 1; }
+}
+
+@keyframes move-to-corner {
+    0% {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    100% {
+        top: 20%;
+        left: 20%;
+        transform: translate(-50%, -50%) scale(1);
+    }
 }
 
 @keyframes liquidGlassBreathe {

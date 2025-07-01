@@ -19,38 +19,8 @@ class SliderDetailGrid {
             "16-clouds-html5-multipurpose-landing-page-template",
             "17-coffee-shop-free-html5-template",
             "18-creative-free-responsive-html5-business-template",
-            "19-darktouch-corporate-portfolio-bootstrap-responsive-web-template",
-            "20-delite-music-html5-bootstrap-responsive-web-template",
-            "21-eat-restaurant-bootstrap-html5-template",
-            "22-elegant-free-multi-purpose-bootstrap-responsive-template",
-            "23-enlive-corporate-free-html5-bootstrap-web-template",
-            "24-fit-healthy-fitness-and-gym-html5-bootstrap-theme",
-            "25-fitness-zone-html5-bootstrap-responsive-web-template",
-            "26-frames-corporate-bootstrap-free-html5-template",
-            "27-free-bootstrap-template-real-estate-my-home",
-            "28-free-bootstrap-template-restaurant-website-treehut",
-            "29-free-bootstrap-template-rockline-business",
-            "30-free-portfolio-html5-responsive-website-sam",
-            "31-getdoctor-free-bootstrap-responsive-website-template",
-            "32-golden-hotel-free-html5-bootstrap-web-template",
-            "33-grand-free-bootstrap-responsive-website-template",
-            "34-green-corp-flat-free-responsive-mobile-website",
-            "35-iam-html5-responsive-portfolio-resume-template",
-            "36-iclick-photography-bootstrap-free-website-template",
-            "37-idata-hosting-free-bootstrap-responsive-website-template",
-            "38-ideal-interior-design-free-bootstrap-website-template",
-            "39-john-bootstrap-one-page-html5-free-resume-template",
-            "40-johndoe-portfolio-resume-bootstrap-template",
-            "41-line-free-app-landing-page-responsive-web-template",
-            "42-lovely-wedding-bootstrap-free-website-template",
-            "43-me-resume-personal-portfolio-responsive-template",
-            "44-mobile-app-free-one-page-responsive-html5-landing-page",
-            "45-relax-interior-free-bootstrap-responsive-website-template",
-            "46-rocket-business-bootstrap-free-responsive-web-theme",
-            "47-skytouch-onepage-bootstrap-responsive-web-template",
-            "48-smart-interior-designs-html5-bootstrap-web-template",
-            "49-speed-hosting-bootstrap-free-html5-template"
-        ].slice(0, 19);
+            "19-darktouch-corporate-portfolio-bootstrap-responsive-web-template"
+        ];
         this.tempLink = "temp.html";
         this.tempPath = "./qinghua-template/spa/";
         this.detailGridsContainer = document.getElementById("detailGrids");
@@ -60,7 +30,7 @@ class SliderDetailGrid {
         this.currentActiveGrid = null;
         this.currentActiveRow = null;
         this.perRow = this.calculatePerRow();
-        this.isReturning = false; // 防抖标志
+        this.isReturning = false;
 
         this.init();
     }
@@ -74,54 +44,39 @@ class SliderDetailGrid {
         return Math.min(Math.max(Math.floor(this.detailGridsContainer.clientWidth / 300), 2), 5);
     }
 
-    createSvgElement(tag, attributes = {}, children = [], text) {
-        const element = document.createElementNS('http://www.w3.org/2000/svg', tag);
-        Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value));
-        children.forEach(child => element.appendChild(child));
-        if (text) element.textContent = text;
-        return element;
-    }
-
     circleLoaderIframe(appenddiv, src) {
         if (!(appenddiv instanceof HTMLElement)) throw new Error('appenddiv 必须是有效的 DOM 元素');
 
         console.log(`尝试加载 iframe: ${src}`);
-        // 清空 detailPage 旧内容
         appenddiv.querySelectorAll('.liquidGlass, #cicleloader-container').forEach(el => el.remove());
 
         const container = document.createElement('div');
         container.id = 'cicleloader-container';
         appenddiv.appendChild(container);
 
-        const svg = this.createSvgElement('svg', { class: 'circleloader', width: '100%', height: '100%' }, [
-            this.createSvgElement('defs', {}, [
-                this.createSvgElement('radialGradient', { id: 'gradient', cx: '50%', cy: '50%', r: '50%' }, [
-                    this.createSvgElement('stop', { offset: '0%', style: 'stop-color: var(--bubble-color-start)' }),
-                    this.createSvgElement('stop', { offset: '100%', style: 'stop-color: var(--bubble-color-end)' })
-                ]),
-                this.createSvgElement('clipPath', { id: 'circleClip' }, [
-                    this.createSvgElement('circle', { class: 'clip-circle', cx: '50%', cy: '50%', r: '50px' })
-                ])
-            ]),
-            this.createSvgElement('circle', { class: 'bubble-loader', cx: '50%', cy: '50%', r: '50px', fill: 'url(#gradient)' }),
-            this.createSvgElement('text', {
-                class: 'loading-text', x: '50%', y: '50%', 'text-anchor': 'middle',
-                fill: 'white', dy: '.3em', 'font-size': '16px', 'font-family': 'Arial'
-            }, [], '加载中...')
-        ]);
+        const rippleLoader = document.createElement('div');
+        rippleLoader.className = 'ripple-loader';
 
-        const iframe = document.createElement('iframe');
-        iframe.src = src;
+        const bubbleLoader = document.createElement('div');
+        bubbleLoader.className = 'bubble-loader';
+
+        const loadingText = document.createElement('div');
+        loadingText.className = 'loading-text';
+        loadingText.textContent = '加载中...';
 
         const backText = document.createElement('h3');
         backText.className = 'btnText';
         backText.innerHTML = '返回';
-        const backButton = document.createElement('div');
-        backButton.className = 'liquidGlass hidden';
-        backButton.style.cursor = 'pointer';
-        backButton.appendChild(backText)
 
-        backButton.addEventListener('click', () => {
+        const iframe = document.createElement('iframe');
+        iframe.src = src;
+
+        bubbleLoader.appendChild(loadingText);
+        container.appendChild(rippleLoader);
+        container.appendChild(bubbleLoader);
+        container.appendChild(iframe);
+
+        bubbleLoader.addEventListener('click', () => {
             if (this.isReturning) return;
             this.isReturning = true;
             console.log('返回按钮点击，恢复页面状态');
@@ -137,18 +92,31 @@ class SliderDetailGrid {
             this.pages.addEventListener('transitionend', onTransitionEnd);
         });
 
-        container.appendChild(svg);
-        container.appendChild(iframe);
-        container.appendChild(backButton);
-
         iframe.addEventListener('load', () => {
-            svg.classList.add('loaded');
-            iframe.classList.add('loaded');
-            const clipCircle = svg.querySelector('.clip-circle');
-            clipCircle.addEventListener('animationend', () => {
-                backButton.classList.remove('hidden');
+            console.log(`iframe 加载完成: ${src}`);
+            rippleLoader.classList.add('active');
+            rippleLoader.addEventListener('animationend', () => {
+                container.classList.add('loaded');
+                rippleLoader.remove();
+                loadingText.remove();
+                bubbleLoader.classList.add('loaded');
+                bubbleLoader.appendChild(backText);
             }, { once: true });
+            iframe.style.transition = `opacity var(--ripple-duration) var(--ripple-easing), filter 0.5s ease, -webkit-clip-path var(--ripple-duration) var(--ripple-easing), clip-path var(--ripple-duration) var(--ripple-easing)`;
+            iframe.classList.add('loaded');
         });
+
+        setTimeout(() => {
+            if (!container.classList.contains('loaded')) {
+                console.warn(`iframe 加载超时，强制显示: ${src}`);
+                container.classList.add('loaded');
+                rippleLoader.remove();
+                loadingText.remove();
+                bubbleLoader.classList.add('loaded');
+                bubbleLoader.appendChild(backText);
+                iframe.classList.add('loaded');
+            }
+        }, 5000);
 
         iframe.addEventListener('error', () => {
             console.error(`iframe 加载失败: ${src}`);
@@ -256,7 +224,6 @@ class SliderDetailGrid {
                 document.body.style.overflow = '';
                 const container = this.detailPage.querySelector('#cicleloader-container');
                 if (container) container.remove();
-                // 移除 detailPage 下的 .liquidGlass
                 this.detailPage.querySelectorAll('.liquidGlass').forEach(el => el.remove());
             }
         });
