@@ -50,19 +50,16 @@ class SliderDetailGrid {
             "47-skytouch-onepage-bootstrap-responsive-web-template",
             "48-smart-interior-designs-html5-bootstrap-web-template",
             "49-speed-hosting-bootstrap-free-html5-template"
-        ];
-        this.numgrids = 19;
+        ].slice(0, 19);
         this.tempLink = "temp.html";
         this.tempPath = "./qinghua-template/spa/";
-        this.templateFolders = this.templateFolders.slice(0, this.numgrids);
         this.detailGridsContainer = document.getElementById("detailGrids");
         this.pages = document.querySelector(".pages-content");
         this.detailPage = document.getElementById("detailPage");
-        this.scrollPosition = 0;
-        this.count = 1;
+        this.gridAspectRatio = 1.3;
         this.currentActiveGrid = null;
         this.currentActiveRow = null;
-        this.gridAspectRatio = 1.3;
+        this.perRow = this.calculatePerRow();
 
         this.init();
     }
@@ -70,233 +67,203 @@ class SliderDetailGrid {
     init() {
         this.generateGrids();
         this.bindEvents();
+        this.circleBack();
     }
 
     calculatePerRow() {
-        const gridWidth = 300;
-        const containerWidth = this.detailGridsContainer.clientWidth;
-        let perRow = Math.floor(containerWidth / gridWidth);
-        return Math.min(Math.max(perRow, 2), 5);
+        return Math.min(Math.max(Math.floor(this.detailGridsContainer.clientWidth / 300), 2), 5);
+    }
+
+    createSvgElement(tag, attributes = {}, children = [], text) {
+        const element = document.createElementNS('http://www.w3.org/2000/svg', tag);
+        Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value));
+        children.forEach(child => element.appendChild(child));
+        if (text) element.textContent = text;
+        return element;
+    }
+
+    circleLoaderIframe(appenddiv, src) {
+        if (!(appenddiv instanceof HTMLElement)) throw new Error('appenddiv 必须是有效的 DOM 元素');
+
+        const container = document.createElement('div');
+        container.id = 'cicleloader-container';
+        appenddiv.appendChild(container);
+
+        const svg = this.createSvgElement('svg', { class: 'circleloader', width: '100%', height: '100%' }, [
+            this.createSvgElement('defs', {}, [
+                this.createSvgElement('radialGradient', { id: 'gradient', cx: '50%', cy: '50%', r: '50%' }, [
+                    this.createSvgElement('stop', { offset: '0%', style: 'stop-color: var(--bubble-color-start)' }),
+                    this.createSvgElement('stop', { offset: '100%', style: 'stop-color: var(--bubble-color-end)' })
+                ]),
+                this.createSvgElement('clipPath', { id: 'circleClip' }, [
+                    this.createSvgElement('circle', { class: 'clip-circle', cx: '50%', cy: '50%', r: '50px' })
+                ])
+            ]),
+            this.createSvgElement('circle', { class: 'bubble-loader', cx: '50%', cy: '50%', r: '50px', fill: 'url(#gradient)' }),
+            this.createSvgElement('text', {
+                class: 'loading-text', x: '50%', y: '50%', 'text-anchor': 'middle',
+                fill: 'white', dy: '.3em', 'font-size': '16px', 'font-family': 'Arial'
+            }, [], '加载中...')
+        ]);
+
+        const iframe = document.createElement('iframe');
+        iframe.src = src;
+
+        container.appendChild(svg);
+        container.appendChild(iframe);
+
+        iframe.addEventListener('load', () => {
+            svg.classList.add('loaded');
+            iframe.classList.add('loaded');
+        });
+
+        iframe.addEventListener('error', () => {
+            container.style.background = 'radial-gradient(circle, #ff4d4d, #b32424)';
+            container.innerHTML = '<div class="error-text">加载失败，请重试</div>';
+        });
     }
 
     injectImageIntoGrid(grid, linkurl, imgurl, info) {
-        const img = document.createElement("img");
-        img.src = imgurl;
-        img.loading = "lazy";
+        const link = Object.assign(document.createElement('a'), { href: linkurl, target: '_blank' });
+        link.addEventListener('click', e => e.preventDefault());
+        link.appendChild(Object.assign(document.createElement('img'), { src: imgurl, loading: 'lazy' }));
 
-        const link = document.createElement("a");
-        link.href = linkurl;
-        link.target = "_blank";
-        link.appendChild(img);
-
-        link.addEventListener("click", (e) => {
-            e.preventDefault();
+        const gridInfo = document.createElement('div');
+        gridInfo.className = 'gridInfo';
+        info.split('/').slice(-2, -1)[0].split('-').forEach(keyword => {
+            gridInfo.appendChild(Object.assign(document.createElement('div'), {
+                className: 'infoKeywords',
+                innerHTML: `<h3>${keyword}</h3>`
+            }));
         });
 
-
-        const gridInfo = document.createElement("div");
-        gridInfo.className = "gridInfo";
-
-        const infoParts = info.split('/');
-        const keywordsPart = infoParts[infoParts.length - 2];
-        console.log(keywordsPart);
-        
-        const infoList = keywordsPart.split('-');
-        for (let i = 0; i < infoList.length; i++) {
-            const infoKeywords = document.createElement("div");
-            infoKeywords.className = "infoKeywords";
-            infoKeywords.innerHTML = `<h3>${infoList[i]}</h3>`;
-            gridInfo.appendChild(infoKeywords);
-        }
-
-        console.log(infoList.length);
-        
-
-        grid.innerHTML = '';
         grid.appendChild(link);
         grid.appendChild(gridInfo);
     }
 
- 
-    createDetailIframe(url) {
-        const container = document.createElement("div");
-        container.className = "detailtemplate";
-        container.style.width = "100%";
-        container.style.height = "100vh";
-        container.style.position = "relative";
-        container.style.overflow = "hidden";
+    circleBack() {
+        const cb = Object.assign(document.createElement('div'), {
+            className: 'liquidGlass',
+            innerHTML: '返回',
+            style: 'cursor: pointer'
+        });
 
-        const iframe = document.createElement("iframe");
-        iframe.style.width = "100%";
-        iframe.style.height = "100%";
-        iframe.style.border = "none";
-        iframe.style.display = "none";
+        cb.addEventListener('click', () => {
+            this.pages.style.transform = 'translateX(0%)';
+            this.detailPage.style.transform = 'translate(0px, 0px)';
+            document.body.style.overflow = '';
+            const container = this.detailPage.querySelector('#cicleloader-container');
+            if (container) container.remove();
+            history.back();
+        });
 
-        iframe.onload = () => {
-            iframe.style.display = "block";
-        };
-
-        container.appendChild(iframe);
-        this.detailPage.appendChild(container);
-        iframe.src = url;
+        this.detailPage.appendChild(cb);
     }
 
     generateGrids() {
         this.detailGridsContainer.innerHTML = '';
-        this.count = 1;
-
-        const total = this.templateFolders.length;
-        const totalGrids = total + 1;
-        const perRow = this.calculatePerRow();
+        const totalGrids = this.templateFolders.length + 1;
         const gridGap = parseFloat(getComputedStyle(this.detailGridsContainer).gap) || 16;
-        const containerWidth = this.detailGridsContainer.clientWidth;
-        const gridWidth = (containerWidth - (perRow - 1) * gridGap) / perRow;
-        const gridHeight = gridWidth * this.gridAspectRatio;
+        const gridWidth = (this.detailGridsContainer.clientWidth - (this.perRow - 1) * gridGap) / this.perRow;
 
-        for (let i = 0; i < Math.ceil(totalGrids / perRow); i++) {
-            const row = document.createElement("div");
-            row.className = "gridsrow";
+        let count = 1;
+        for (let i = 0; i < Math.ceil(totalGrids / this.perRow); i++) {
+            const row = document.createElement('div');
+            row.className = 'gridsrow';
 
-            for (let j = 0; j < perRow && this.count <= totalGrids; j++) {
-                const grid = document.createElement("div");
-                grid.className = "detailGrid";
+            for (let j = 0; j < this.perRow && count <= totalGrids; j++, count++) {
+                const grid = document.createElement('div');
+                grid.className = 'detailGrid';
+                grid.style.height = `${gridWidth * this.gridAspectRatio}px`;
 
-                if (this.count === totalGrids) {
-                    grid.classList.add("enddetailGrid");
+                if (count === totalGrids) {
+                    grid.classList.add('enddetailGrid');
                     grid.innerHTML = `<a href="${this.tempLink}" target="_blank">查看更多模板 ➤</a>`;
-                    grid.style.cursor = "pointer";
+                    grid.style.cursor = 'pointer';
                 } else {
-                    const imgurl = this.tempPath + this.templateFolders[this.count - 1] + "/screenshot.png";
-                    const linkurl = this.tempPath + this.templateFolders[this.count - 1] + "/index.html";
+                    const index = count - 1;
+                    const linkurl = `${this.tempPath}${this.templateFolders[index]}/index.html`;
+                    const imgurl = `${this.tempPath}${this.templateFolders[index]}/screenshot.png`;
                     this.injectImageIntoGrid(grid, linkurl, imgurl, linkurl);
                 }
 
-                this.bindGridEvents(grid, this.count - 1);
                 row.appendChild(grid);
-                this.count += 1;
             }
-
             this.detailGridsContainer.appendChild(row);
         }
+
+        this.bindGridEvents();
     }
 
-    bindGridEvents(grid, index) {
-        // if (grid.classList.contains("enddetailGrid")) return;
+    bindGridEvents() {
+        this.detailGridsContainer.addEventListener('click', e => {
+            const grid = e.target.closest('.detailGrid');
+            if (!grid || grid.classList.contains('enddetailGrid')) return;
+            const index = Array.from(grid.parentNode.children).indexOf(grid);
+            const linkurl = `${this.tempPath}${this.templateFolders[index]}/index.html`;
 
-        grid.addEventListener("click", (e) => {
-            const xpos = e.clientX;
-            let linkurl = this.tempPath + this.templateFolders[index] + "/index.html";
-            // this.detailPage.querySelector('h3').innerText = linkurl;
-            this.createDetailIframe(linkurl);
+            const onTransitionEnd = () => {
+                this.circleLoaderIframe(this.detailPage, linkurl);
+                this.detailPage.removeEventListener('transitionend', onTransitionEnd);
+            };
 
-            let rownum = this.calculatePerRow();
-            this.sliding(xpos, index, rownum);
-            document.body.style.overflow = "hidden";
+            this.detailPage.addEventListener('transitionend', onTransitionEnd);
+            this.sliding(e.clientX, index);
+            document.body.style.overflow = 'hidden';
         });
 
-        grid.addEventListener("mouseover", () => {
-            if (grid === this.currentActiveGrid) return;
-
-            this.currentActiveGrid?.classList.remove("activeGrid");
-            this.currentActiveRow?.classList.remove("activeRow");
-
-            grid.classList.add("activeGrid");
-            const row = grid.closest(".gridsrow");
-            row?.classList.add("activeRow");
-
+        this.detailGridsContainer.addEventListener('mouseover', e => {
+            const grid = e.target.closest('.detailGrid');
+            if (!grid || grid === this.currentActiveGrid) return;
+            this.currentActiveGrid?.classList.remove('activeGrid');
+            this.currentActiveRow?.classList.remove('activeRow');
+            grid.classList.add('activeGrid');
+            const row = grid.closest('.gridsrow');
+            row?.classList.add('activeRow');
             this.currentActiveGrid = grid;
             this.currentActiveRow = row;
         });
     }
 
     bindEvents() {
-        this.detailPage.addEventListener("click", () => {
-            this.pages.style.transform = "translateX(0%)";
-            const detailTemplate = this.detailPage.querySelector(".detailtemplate");
-            if (detailTemplate) {
-                setTimeout(() => {
-                    detailTemplate.remove();
-                }, 1000);
-            }
-            this.detailPage.style.transform = `translate(0px, 0px)`;
-            document.body.style.overflow = "";
-            history.back();
-        });
-
-        window.addEventListener("resize", () => {
+        window.addEventListener('resize', () => {
+            this.perRow = this.calculatePerRow();
             this.generateGrids();
         });
-
-        window.addEventListener("popstate", (event) => {
-            if (location.hash !== "#detailpage") {
-                this.pages.style.transform = "translateX(0%)";
-                const detailTemplate = this.detailPage.querySelector(".detailtemplate");
-                if (detailTemplate) {
-                    detailTemplate.remove();
-                }
+        window.addEventListener('popstate', () => {
+            if (location.hash !== '#detailpage') {
+                this.pages.style.transform = 'translateX(0%)';
+                this.detailPage.style.transform = 'translate(0px, 0px)';
+                document.body.style.overflow = '';
+                const container = this.detailPage.querySelector('#cicleloader-container');
+                if (container) container.remove();
             }
-            this.detailPage.style.transform = `translate(0px, 0px)`;
-            document.body.style.overflow = "";
         });
     }
 
-    sliding(pos, index, rownum) {
-        const totalGrids = this.templateFolders.length助手
+    sliding(pos, index) {
+        const rowIndex = index % this.perRow;
+        const moveDirection = (this.perRow === 1 || (this.perRow % 2 === 1 && rowIndex === Math.floor(this.perRow / 2)))
+            ? pos > window.innerWidth / 2 ? 'left' : 'right'
+            : rowIndex < Math.floor(this.perRow / 2) ? 'right' : 'left';
 
-        const fullRowCount = Math.floor(totalGrids / rownum);
-        const fullRowItems = fullRowCount * rownum;
-        const lastRowCount = totalGrids - fullRowItems;
-
-        let realRownum = rownum;
-        let rowindex = index % rownum;
-
-        if (index >= fullRowItems && lastRowCount > 0) {
-            realRownum = lastRowCount;
-            rowindex = index - fullRowItems;
-        }
-
-        let moveDirection = "";
-
-        if (realRownum === 1) {
-            moveDirection = pos > window.innerWidth / 2 ? "left" : "right";
-        } else if (realRownum % 2 === 1) {
-            const middle = Math.floor(realRownum / 2);
-            if (rowindex < middle) {
-                moveDirection = "right";
-            } else if (rowindex === middle) {
-                moveDirection = pos > window.innerWidth / 2 ? "left" : "right";
-            } else {
-                moveDirection = "left";
-            }
-        } else {
-            const middle = realRownum / 2;
-            if (rowindex < middle) {
-                moveDirection = "right";
-            } else {
-                moveDirection = "left";
-            }
-        }
-
-        if (moveDirection === "left") {
-            this.detailPage.style.transform = `translate(100%, ${this.scrollPosition}px)`;
-            this.pages.style.transform = "translateX(-100%)";
-        } else {
-            this.detailPage.style.transform = `translate(-100%, ${this.scrollPosition}px)`;
-            this.pages.style.transform = "translateX(100%)";
-        }
-
-        history.pushState(null, "", "#detailpage");
-        this.detailPageScroll();
+        this.detailPageScroll(moveDirection === 'left' ? '100%' : '-100%');
+        this.pages.style.transform = `translateX(${moveDirection === 'left' ? '-100%' : '100%'})`;
+        history.pushState(null, '', '#detailpage');
     }
 
-    detailPageScroll(x = undefined, y = undefined) {
-        const currentTransform = this.detailPage.style.transform;
-        const transformX = currentTransform.split(",")[0]?.split("(")[1]?.trim() || "0px";
-        const finalX = (x !== undefined) ? `${x}px` : transformX;
-        const finalY = (y !== undefined) ? `${y}px` : `${window.scrollY}px`;
-
-        this.detailPage.style.transform = `translate(${finalX}, ${finalY})`;
+    detailPageScroll(x = '0px', y = `${window.scrollY}px`) {
+        this.detailPage.style.transform = `translate(${x}, ${y})`;
     }
 }
 
 const gallery = new SliderDetailGrid();
+
+function listenToNavigationEvents() {
+    window.addEventListener('load', () => console.log('页面加载完成（刷新或首次进入）'));
+    window.addEventListener('popstate', () => console.log('检测到前进或后退操作'));
+    window.addEventListener('beforeunload', () => console.log('页面即将被刷新或关闭'));
+    window.addEventListener('pageshow', event => console.log(event.persisted ? '页面从缓存恢复' : '页面显示'));
+}
+
+listenToNavigationEvents();
