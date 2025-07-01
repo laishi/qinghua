@@ -62,7 +62,7 @@ class SliderDetailGrid {
 
         const loadingText = document.createElement('div');
         loadingText.className = 'loading-text';
-        loadingText.textContent = '加载中...';
+        loadingText.textContent = '加载中';
 
         const backText = document.createElement('h3');
         backText.className = 'btnText';

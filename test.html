@@ -1,233 +1,84 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SVG 气泡遮罩加载器 - CSS 隔离</title>
-    <style>
-        :root {
-            --bubble-size: 50px;
-            --bubble-color-start: #4dabf7;
-            --bubble-color-end: #1c7cd6;
-            --breathe-duration: 2s;
-            --ripple-duration: 1s;
-            --text-fade-duration: 0.5s;
-            --easing: cubic-bezier(0.4, 0, 0.6, 1);
-            --ripple-easing: cubic-bezier(0.4, 0, 0.2, 1);
-        }
+  <meta charset="UTF-8">
+  <title>iframe clip-path 动画示例</title>
+  <style>
+    :root {
+      --bubble-size-start: 0%;
+      --bubble-size-end: 150%;
+    }
 
-        body {
-            margin: 0;
-            overflow: hidden;
-            background: #f0f0f0;
-            height: 100vh;
-        }
+    body {
+      margin: 0;
+      background: #111;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
 
-        #cicleloader-container {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-        }
+    #cicleloader-container {
+      position: relative;
+      width: 80vw;
+      height: 60vh;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
 
-        #cicleloader-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-            z-index: 999;
-            display: none;
-            clip-path: url(#circleClip);
-            opacity: 0;
-            transition: opacity var(--ripple-duration) var(--ripple-easing),
-                        filter 0.5s ease;
-            filter: blur(5px);
-        }
+    #cicleloader-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      z-index: 1;
+      opacity: 0;
+      filter: blur(5px);
+      clip-path: circle(var(--bubble-size-start) at 50% 50%);
+      transition: 
+        opacity 0.8s ease-out,
+        filter 0.8s ease-out,
+        clip-path 1.5s ease-out;
+    }
 
-        #cicleloader-container iframe.loaded {
-            display: block;
-            opacity: 1;
-            filter: blur(0);
-        }
+    #cicleloader-container iframe.loaded {
+      opacity: 1;
+      filter: blur(0px);
+      clip-path: circle(var(--bubble-size-end) at 50% 50%);
+    }
 
-        #cicleloader-container svg.circleloader {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1000;
-            pointer-events: none;
-        }
-
-        #cicleloader-container .bubble-loader {
-            animation: breathe-loader var(--breathe-duration) var(--easing) infinite;
-            filter: drop-shadow(0 0 15px rgba(29, 124, 214, 0.5));
-        }
-
-        #cicleloader-container .loaded .bubble-loader {
-            display: none;
-        }
-
-        #cicleloader-container .clip-circle {
-            r: var(--bubble-size);
-        }
-
-        #cicleloader-container .loaded .clip-circle {
-            animation: ripple-loader var(--ripple-duration) var(--ripple-easing) forwards;
-        }
-
-        #cicleloader-container .loading-text {
-            transition: opacity var(--text-fade-duration) ease;
-        }
-
-        #cicleloader-container .loaded .loading-text {
-            opacity: 0;
-        }
-
-        @keyframes breathe-loader {
-            0%, 100% {
-                r: var(--bubble-size);
-                opacity: 0.9;
-            }
-            50% {
-                r: calc(var(--bubble-size) * 1.2);
-                opacity: 1;
-            }
-        }
-
-        @keyframes ripple-loader {
-            0% {
-                r: var(--bubble-size);
-            }
-            100% {
-                r: 150vmax;
-            }
-        }
-
-        #cicleloader-container .error-text {
-            color: white;
-            text-align: center;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 1.5em;
-            opacity: 0;
-            animation: fadeIn 0.5s ease forwards;
-        }
-
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
-        }
-    </style>
+    /* 可选：文字加载提示 */
+    #loading-text {
+      color: white;
+      font-size: 1.2em;
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: sans-serif;
+      opacity: 0.6;
+    }
+  </style>
 </head>
 <body>
-    <div id="app"></div>
-    <script>
-        function circleLoaderIframe(appenddiv, src) {
-            // 确保 appenddiv 存在
-            if (!(appenddiv instanceof HTMLElement)) {
-                throw new Error('appenddiv 必须是有效的 DOM 元素');
-            }
 
-            // 创建 cicleloader-container
-            const container = document.createElement('div');
-            container.id = 'cicleloader-container';
-            appenddiv.appendChild(container);
+  <div id="cicleloader-container">
+    <div id="loading-text">加载中...</div>
+    <iframe src="https://www.qinghua.cloud" id="clipIframe"></iframe>
+  </div>
 
-            // 创建 SVG
-            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-            svg.classList.add('circleloader');
-            svg.setAttribute('width', '100%');
-            svg.setAttribute('height', '100%');
+  <script>
+    const iframe = document.getElementById("clipIframe");
+    iframe.addEventListener("load", () => {
+      iframe.classList.add("loaded");
+      document.getElementById("loading-text").style.display = "none";
+    });
+  </script>
 
-            // 创建 defs
-            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-
-            // 创建 radialGradient
-            const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
-            gradient.id = 'gradient';
-            gradient.setAttribute('cx', '50%');
-            gradient.setAttribute('cy', '50%');
-            gradient.setAttribute('r', '50%');
-
-            const stop1 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-            stop1.setAttribute('offset', '0%');
-            stop1.style.stopColor = 'var(--bubble-color-start)';
-
-            const stop2 = document.createElementNS('http://www.w3.org/2000/svg', 'stop');
-            stop2.setAttribute('offset', '100%');
-            stop2.style.stopColor = 'var(--bubble-color-end)';
-
-            gradient.appendChild(stop1);
-            gradient.appendChild(stop2);
-
-            // 创建 clipPath
-            const clipPath = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
-            clipPath.id = 'circleClip';
-            const clipCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            clipCircle.classList.add('clip-circle');
-            clipCircle.setAttribute('cx', '50%');
-            clipCircle.setAttribute('cy', '50%');
-            clipCircle.setAttribute('r', '50px');
-            clipPath.appendChild(clipCircle);
-
-            defs.appendChild(gradient);
-            defs.appendChild(clipPath);
-
-            // 创建视觉气泡
-            const bubble = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            bubble.classList.add('bubble-loader');
-            bubble.setAttribute('cx', '50%');
-            bubble.setAttribute('cy', '50%');
-            bubble.setAttribute('r', '50px');
-            bubble.setAttribute('fill', 'url(#gradient)');
-
-            // 创建加载文本
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.classList.add('loading-text');
-            text.setAttribute('x', '50%');
-            text.setAttribute('y', '50%');
-            text.setAttribute('text-anchor', 'middle');
-            text.setAttribute('fill', 'white');
-            text.setAttribute('dy', '.3em');
-            text.setAttribute('font-size', '16px');
-            text.setAttribute('font-family', 'Arial');
-            text.textContent = '加载中...';
-
-            // 组装 SVG
-            svg.appendChild(defs);
-            svg.appendChild(bubble);
-            svg.appendChild(text);
-
-            // 创建 iframe
-            const iframe = document.createElement('iframe');
-            iframe.src = src;
-
-            // 追加到 cicleloader-container
-            container.appendChild(svg);
-            container.appendChild(iframe);
-
-            // 监听 iframe 加载完成
-            iframe.addEventListener('load', () => {
-                svg.classList.add('loaded');
-                iframe.classList.add('loaded');
-            });
-
-            // 错误处理
-            iframe.addEventListener('error', () => {
-                container.style.background = 'radial-gradient(circle, #ff4d4d, #b32424)';
-                container.innerHTML = '<div class="error-text">加载失败，请重试</div>';
-            });
-        }
-
-        // 调用函数
-        const app = document.getElementById('app');
-        circleLoaderIframe(app, 'https://www.qinghua.cloud/');
-    </script>
 </body>
 </html>
