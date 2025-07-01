@@ -186,7 +186,7 @@ class SliderDetailGrid {
         grid.addEventListener("click", (e) => {
             const xpos = e.clientX;
             let linkurl = this.tempPath + this.templateFolders[index] + "/index.html";
-            this.detailPage.querySelector('h3').innerText = linkurl;
+            // this.detailPage.querySelector('h3').innerText = linkurl;
             this.createDetailIframe(linkurl);
 
             let rownum = this.calculatePerRow();

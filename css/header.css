@@ -43,19 +43,6 @@
         url(../images/bg.png);
 }
 
-.header-content .parallaxbg {
-  animation: lookatbg 2s ease-in-out;
-  animation-iteration-count: infinite;
-  animation-direction: alternate;
-  animation-delay: -5s;
-  opacity: 0.9;
-  transform: translateY(1%);
-}
-
-/* @keyframes lookatbg {
-  to { transform: translateY(-1%); }
-} */
-
 
 /* 前景人物 */
 .header-content .girl {
