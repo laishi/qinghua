@@ -214,7 +214,7 @@
     background: radial-gradient(circle, var(--bubble-color-start), var(--bubble-color-end));
     border-radius: 50%;
     transform: translate(-50%, -50%) scale(1);
-    animation: none; /* 初始无动画，等待 active */
+    animation: none;
     filter: drop-shadow(0 0 15px rgba(29, 124, 214, 0.5));
     z-index: 1001;
     pointer-events: none;
@@ -271,7 +271,7 @@
     pointer-events: none;
     opacity: 1;
     transform: scale(1);
-    animation: none; /* 初始无动画，等待 active */
+    animation: none;
 }
 
 #cicleloader-container .loading-text.active {
@@ -313,22 +313,22 @@
 @keyframes breathe-loader {
     0%, 100% {
         transform: translate(-50%, -50%) scale(1);
-        opacity: 0.9;
+        opacity: 0.8;
     }
     50% {
-        transform: translate(-50%, -50%) scale(1.2);
+        transform: translate(-50%, -50%) scale(1.3); /* 更大范围的放大 */
         opacity: 1;
     }
 }
 
 @keyframes breathe-text {
     0%, 100% {
-        transform: scale(1.2);
+        transform: scale(1.3); /* 反向：bubble-loader 小时变大 */
         opacity: 1;
     }
     50% {
-        transform: scale(0.8);
-        opacity: 0.8;
+        transform: scale(0.7); /* 反向：bubble-loader 大时变小 */
+        opacity: 0.7;
     }
 }
 
