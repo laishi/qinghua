@@ -60,6 +60,7 @@ class SliderDetailGrid {
         this.currentActiveGrid = null;
         this.currentActiveRow = null;
         this.perRow = this.calculatePerRow();
+        this.isReturning = false; // 防抖标志
 
         this.init();
     }
@@ -67,7 +68,6 @@ class SliderDetailGrid {
     init() {
         this.generateGrids();
         this.bindEvents();
-        this.circleBack();
     }
 
     calculatePerRow() {
@@ -84,6 +84,10 @@ class SliderDetailGrid {
 
     circleLoaderIframe(appenddiv, src) {
         if (!(appenddiv instanceof HTMLElement)) throw new Error('appenddiv 必须是有效的 DOM 元素');
+
+        console.log(`尝试加载 iframe: ${src}`);
+        // 清空 detailPage 旧内容
+        appenddiv.querySelectorAll('.liquidGlass, #cicleloader-container').forEach(el => el.remove());
 
         const container = document.createElement('div');
         container.id = 'cicleloader-container';
@@ -109,17 +113,44 @@ class SliderDetailGrid {
         const iframe = document.createElement('iframe');
         iframe.src = src;
 
+        const backButton = document.createElement('div');
+        backButton.className = 'liquidGlass hidden';
+        backButton.innerHTML = '返回';
+        backButton.style.cursor = 'pointer';
+
+        backButton.addEventListener('click', () => {
+            if (this.isReturning) return;
+            this.isReturning = true;
+            console.log('返回按钮点击，恢复页面状态');
+            this.pages.style.transform = 'translateX(0%)';
+            this.detailPage.style.transform = 'translate(0px, 0px)';
+            document.body.style.overflow = '';
+            container.remove();
+            const onTransitionEnd = () => {
+                history.back();
+                this.pages.removeEventListener('transitionend', onTransitionEnd);
+                this.isReturning = false;
+            };
+            this.pages.addEventListener('transitionend', onTransitionEnd);
+        });
+
         container.appendChild(svg);
         container.appendChild(iframe);
+        container.appendChild(backButton);
 
         iframe.addEventListener('load', () => {
             svg.classList.add('loaded');
             iframe.classList.add('loaded');
+            const clipCircle = svg.querySelector('.clip-circle');
+            clipCircle.addEventListener('animationend', () => {
+                backButton.classList.remove('hidden');
+            }, { once: true });
         });
 
         iframe.addEventListener('error', () => {
+            console.error(`iframe 加载失败: ${src}`);
             container.style.background = 'radial-gradient(circle, #ff4d4d, #b32424)';
-            container.innerHTML = '<div class="error-text">加载失败，请重试</div>';
+            container.innerHTML = `<div class="error-text">加载失败: ${src}</div>`;
         });
     }
 
@@ -139,25 +170,6 @@ class SliderDetailGrid {
 
         grid.appendChild(link);
         grid.appendChild(gridInfo);
-    }
-
-    circleBack() {
-        const cb = Object.assign(document.createElement('div'), {
-            className: 'liquidGlass',
-            innerHTML: '返回',
-            style: 'cursor: pointer'
-        });
-
-        cb.addEventListener('click', () => {
-            this.pages.style.transform = 'translateX(0%)';
-            this.detailPage.style.transform = 'translate(0px, 0px)';
-            document.body.style.overflow = '';
-            const container = this.detailPage.querySelector('#cicleloader-container');
-            if (container) container.remove();
-            history.back();
-        });
-
-        this.detailPage.appendChild(cb);
     }
 
     generateGrids() {
@@ -199,7 +211,10 @@ class SliderDetailGrid {
         this.detailGridsContainer.addEventListener('click', e => {
             const grid = e.target.closest('.detailGrid');
             if (!grid || grid.classList.contains('enddetailGrid')) return;
-            const index = Array.from(grid.parentNode.children).indexOf(grid);
+            const row = grid.closest('.gridsrow');
+            const rowIndex = Array.from(this.detailGridsContainer.children).indexOf(row);
+            const gridIndex = Array.from(row.children).indexOf(grid);
+            const index = rowIndex * this.perRow + gridIndex;
             const linkurl = `${this.tempPath}${this.templateFolders[index]}/index.html`;
 
             const onTransitionEnd = () => {
@@ -232,11 +247,14 @@ class SliderDetailGrid {
         });
         window.addEventListener('popstate', () => {
             if (location.hash !== '#detailpage') {
+                console.log('popstate 触发，恢复页面状态');
                 this.pages.style.transform = 'translateX(0%)';
                 this.detailPage.style.transform = 'translate(0px, 0px)';
                 document.body.style.overflow = '';
                 const container = this.detailPage.querySelector('#cicleloader-container');
                 if (container) container.remove();
+                // 移除 detailPage 下的 .liquidGlass
+                this.detailPage.querySelectorAll('.liquidGlass').forEach(el => el.remove());
             }
         });
     }
