@@ -11,12 +11,12 @@
 
 #services {
   padding: 4em 1.5em;
-  font-family: 'Segoe UI', Roboto, sans-serif;
 }
 
 .services-container {
-  max-width: 1280px;
+  /* max-width: 1280px; */
   margin: 0 auto;
+  background-color: var(--wave-color);
 }
 
 .services-header {

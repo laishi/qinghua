@@ -46,6 +46,7 @@ class SliderDetailGrid {
             document.body.style.overflow = '';
             this.detailPage.querySelector('#cicleloader-container')?.remove();
             this.detailPage.querySelectorAll('.liquidGlass').forEach(el => el.remove());
+
         } else if (newState === 'detail') {
             const { linkurl } = payload;
             this.pages.style.transform = 'translateX(-100%)';
@@ -85,18 +86,38 @@ class SliderDetailGrid {
 
         appenddiv.querySelectorAll('.liquidGlass, #cicleloader-container').forEach(el => el.remove());
 
-        const container = Object.assign(document.createElement('div'), { id: 'cicleloader-container' });
-        const rippleLoader = Object.assign(document.createElement('div'), { className: 'ripple-loader' });
-        const bubbleLoader = Object.assign(document.createElement('div'), { className: 'bubble-loader' });
-        const loadingText = Object.assign(document.createElement('div'), { className: 'loading-text', textContent: '加载中' });
-        const backText = Object.assign(document.createElement('h3'), { className: 'btnText', innerHTML: '<' });
-        const iframe = Object.assign(document.createElement('iframe'), { src });
+        // 创建容器元素
+        const container = document.createElement('div');
+        container.id = 'cicleloader-container';
+
+        // 创建波纹加载元素
+        const rippleLoader = document.createElement('div');
+        rippleLoader.className = 'ripple-loader';
+
+        // 创建气泡加载元素
+        const bubbleLoader = document.createElement('div');
+        bubbleLoader.className = 'bubble-loader';
+
+        // 创建加载文本元素
+        const loadingText = document.createElement('div');
+        loadingText.className = 'loading-text';
+        loadingText.textContent = '加载中';
+
+        // 创建返回按钮文本
+        const backText = document.createElement('h3');
+        backText.className = 'btnText';
+        backText.innerHTML = '&lt;'; // 使用HTML实体表示<符号
+
+        // 创建iframe元素
+        const iframe = document.createElement('iframe');
+        iframe.src = src; // src是外部传入的变量
 
         bubbleLoader.appendChild(loadingText);
         container.append(rippleLoader, bubbleLoader, iframe);
         appenddiv.appendChild(container);
 
         bubbleLoader.addEventListener('click', () => {
+
             if (this.isReturning) return;
             this.isReturning = true;
             this.setState('list');
@@ -128,10 +149,11 @@ class SliderDetailGrid {
                     rippleLoader.remove();
                     loadingText.remove();
                     bubbleLoader.classList.add('loaded');
+
                     bubbleLoader.appendChild(backText);
                 }, { once: true });
             }
-        }, 5000);
+        }, 1000);
 
         iframe.addEventListener('error', () => {
             container.style.background = 'radial-gradient(circle, #ff4d4d, #b32424)';
@@ -195,37 +217,23 @@ class SliderDetailGrid {
             const grid = e.target.closest('.detailGrid');
             if (!grid || grid.classList.contains('enddetailGrid')) return;
 
+            let transformStartTime = 0;
+            let transformDuration = 0;
 
+            this.detailPage.addEventListener('transitionrun', (e) => {
+                if (e.propertyName === 'transform') {
+                    transformStartTime = performance.now();
+                    console.log('transform 动画开始');
+                }
+            });
 
-
-
-let transformStartTime = 0;
-let transformDuration = 0;
-
-this.detailPage.addEventListener('transitionrun', (e) => {
-    if (e.propertyName === 'transform') {
-        transformStartTime = performance.now();
-        console.log('transform 动画开始');
-    }
-});
-
-this.detailPage.addEventListener('transitionend', (e) => {
-    if (e.propertyName === 'transform') {
-        transformDuration = performance.now() - transformStartTime;
-        console.log('transform 动画结束');
-        console.log(`动画持续时间：${transformDuration.toFixed(2)} ms`);
-    }
-});
-
-
-
-
-
-
-
-
-
-            
+            this.detailPage.addEventListener('transitionend', (e) => {
+                if (e.propertyName === 'transform') {
+                    transformDuration = performance.now() - transformStartTime;
+                    console.log('transform 动画结束');
+                    console.log(`动画持续时间：${transformDuration.toFixed(2)} ms`);
+                }
+            });
 
             const row = grid.closest('.gridsrow');
             const rowIndex = Array.from(this.detailGridsContainer.children).indexOf(row);
