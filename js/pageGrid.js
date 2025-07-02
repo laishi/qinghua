@@ -89,7 +89,7 @@ class SliderDetailGrid {
         const rippleLoader = Object.assign(document.createElement('div'), { className: 'ripple-loader' });
         const bubbleLoader = Object.assign(document.createElement('div'), { className: 'bubble-loader' });
         const loadingText = Object.assign(document.createElement('div'), { className: 'loading-text', textContent: '加载中' });
-        const backText = Object.assign(document.createElement('h3'), { className: 'btnText', innerHTML: '返回' });
+        const backText = Object.assign(document.createElement('h3'), { className: 'btnText', innerHTML: '<' });
         const iframe = Object.assign(document.createElement('iframe'), { src });
 
         bubbleLoader.appendChild(loadingText);
@@ -194,6 +194,38 @@ class SliderDetailGrid {
         this.detailGridsContainer.addEventListener('click', e => {
             const grid = e.target.closest('.detailGrid');
             if (!grid || grid.classList.contains('enddetailGrid')) return;
+
+
+
+
+
+let transformStartTime = 0;
+let transformDuration = 0;
+
+this.detailPage.addEventListener('transitionrun', (e) => {
+    if (e.propertyName === 'transform') {
+        transformStartTime = performance.now();
+        console.log('transform 动画开始');
+    }
+});
+
+this.detailPage.addEventListener('transitionend', (e) => {
+    if (e.propertyName === 'transform') {
+        transformDuration = performance.now() - transformStartTime;
+        console.log('transform 动画结束');
+        console.log(`动画持续时间：${transformDuration.toFixed(2)} ms`);
+    }
+});
+
+
+
+
+
+
+
+
+
+            
 
             const row = grid.closest('.gridsrow');
             const rowIndex = Array.from(this.detailGridsContainer.children).indexOf(row);

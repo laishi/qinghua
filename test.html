@@ -2,83 +2,327 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>iframe clip-path 动画示例</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>青花卓越 - 旋转滑块</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <style>
     :root {
-      --bubble-size-start: 0%;
-      --bubble-size-end: 150%;
+      --qhzx-slide-height: 360px;
+      --qhzx-slide-width: 480px;
+      --qhzx-outer-radius: 0px;
+      --qhzx-upper-arc-height: 0px;
+      --qhzx-slide-side-padding: 0px;
+      --qhzx-lower-arc-height: 0px;
+      --qhzx-inner-radius: 0px;
     }
-
     body {
+      background: #1a1a1a;
+      font-family: 'Noto Sans SC', sans-serif;
+      font-weight: 400;
+      overflow: hidden;
       margin: 0;
-      background: #111;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      overflow: hidden;
+      color: #fff;
     }
-
-    #cicleloader-container {
+    .qhzx-rotate-slider {
+      margin: 2em auto;
+      height: calc(var(--qhzx-slide-height) + 2.5em);
+      width: var(--qhzx-slide-width);
       position: relative;
-      width: 80vw;
-      height: 60vh;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
-
-    #cicleloader-container iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-      z-index: 1;
-      opacity: 0;
-      filter: blur(5px);
-      clip-path: circle(var(--bubble-size-start) at 50% 50%);
-      transition: 
-        opacity 0.8s ease-out,
-        filter 0.8s ease-out,
-        clip-path 1.5s ease-out;
-    }
-
-    #cicleloader-container iframe.loaded {
-      opacity: 1;
-      filter: blur(0px);
-      clip-path: circle(var(--bubble-size-end) at 50% 50%);
-    }
-
-    /* 可选：文字加载提示 */
-    #loading-text {
-      color: white;
-      font-size: 1.2em;
-      position: absolute;
-      z-index: 2;
-      top: 50%;
+    .qhzx-rotate-slider__slides {
+      height: var(--qhzx-outer-radius);
+      width: var(--qhzx-outer-radius);
+      margin: 0;
+      padding: 0;
+      position: relative;
+      top: calc(-1 * var(--qhzx-upper-arc-height));
       left: 50%;
-      transform: translate(-50%, -50%);
-      font-family: sans-serif;
-      opacity: 0.6;
+      transform-origin: center center;
+      transform: translateX(-50%);
+      will-change: transform;
+    }
+    .qhzx-rotate-slider__slides--animate {
+      transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .qhzx-rotate-slider__item {
+      position: absolute;
+      top: var(--qhzx-upper-arc-height);
+      left: 50%;
+      transform-origin: center calc(var(--qhzx-inner-radius) + var(--qhzx-slide-height));
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0.4;
+      transition: opacity 0.8s ease-in-out;
+    }
+    .qhzx-rotate-slider__item--active {
+      opacity: 1;
+    }
+    .qhzx-rotate-slider__slide {
+      background-position: center;
+      background-size: cover;
+      color: #fff;
+      width: var(--qhzx-slide-width);
+      height: var(--qhzx-slide-height);
+      padding: var(--qhzx-upper-arc-height) var(--qhzx-slide-side-padding) var(--qhzx-lower-arc-height) var(--qhzx-slide-side-padding);
+      clip-path: url(#qhzx-slideClip);
+    }
+    .qhzx-rotate-slider__icon {
+      width: 10em;
+      height: 10em;
+      background: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      top: -2.5em;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    .qhzx-rotate-slider__icon i {
+      font-size: 3em;
+      color: #264653;
+    }
+    .qhzx-rotate-slider__inner {
+      box-sizing: border-box;
+      padding: 1em;
+      height: 100%;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .qhzx-rotate-slider__inner h2 {
+      margin: 0.8em 0 0.5em;
+      font-size: 1.6em;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    }
+    .qhzx-rotate-slider__inner p {
+      margin: 0.3em 0;
+      font-size: 0.95em;
+      line-height: 1.4;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+      max-width: 80%;
+    }
+    .qhzx-rotate-slider__item:nth-of-type(1) .qhzx-rotate-slider__slide { background: #2a9d8f; } /* 青绿色 */
+    .qhzx-rotate-slider__item:nth-of-type(2) .qhzx-rotate-slider__slide { background: #e76f51; } /* 珊瑚红 */
+    .qhzx-rotate-slider__item:nth-of-type(3) .qhzx-rotate-slider__slide { background: #264653; } /* 深蓝 */
+    .qhzx-rotate-slider_coef-item:nth-of-type(4) .qhzx-rotate-slider__slide { background: #f4a261; } /* 橙色 */
+    .qhzx-rotate-slider__item:nth-of-type(5) .qhzx-rotate-slider__slide { background: #e9c46a; } /* 黄色 */
+    @media (max-width: 600px) {
+      :root {
+        --qhzx-slide-height: 200px;
+        --qhzx-slide-width: 300px;
+      }
+      .qhzx-rotate-slider {
+        height: calc(var(--qhzx-slide-height) + 1.5em);
+      }
+      .qhzx-rotate-slider__inner h2 {
+        font-size: 1.1em;
+      }
+      .qhzx-rotate-slider__inner p {
+        font-size: 0.8em;
+      }
+      .qhzx-rotate-slider__icon {
+        width: 6em;
+        height: 6em;
+        top: -1.5em;
+      }
+      .qhzx-rotate-slider__icon i {
+        font-size: 2em;
+      }
+    }
+    .qhzx-rotate-slider__footer {
+      text-align: center;
+      padding: 1em;
+      color: #ccc;
+      font-size: 0.9em;
+    }
+    .qhzx-rotate-slider__footer p {
+      margin: 0.2em 0;
     }
   </style>
 </head>
 <body>
-
-  <div id="cicleloader-container">
-    <div id="loading-text">加载中...</div>
-    <iframe src="https://www.qinghua.cloud" id="clipIframe"></iframe>
+  <div class="qhzx-rotate-slider" role="region" aria-label="青花卓越服务展示">
+    <ul class="qhzx-rotate-slider__slides" role="list">
+      <li class="qhzx-rotate-slider__item qhzx-rotate-slider__item--active" role="listitem" aria-label="关于我们">
+        <div class="qhzx-rotate-slider__icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="qhzx-rotate-slider__slide">
+          <div class="qhzx-rotate-slider__inner">
+            <h2>我们是谁</h2>
+            <p>青花卓越，专注中小企业低价、快速、赚钱的网站！</p>
+            <p>懂生意，懂您，助您招客户、卖产品、提形象！</p>
+          </div>
+        </div>
+      </li>
+      <li class="qhzx-rotate-slider__item" role="listitem" aria-label="价格实在">
+        <div class="qhzx-rotate-slider__icon">
+          <i class="fas fa-wallet"></i>
+        </div>
+        <div class="qhzx-rotate-slider__slide">
+          <div class="qhzx-rotate-slider__inner">
+            <h2>价格实在</h2>
+            <p>小预算也能做出专业网站，按需付费！</p>
+            <p>省心省钱，助您快速开启线上生意！</p>
+          </div>
+        </div>
+      </li>
+      <li class="qhzx-rotate-slider__item" role="listitem" aria-label="上线快">
+        <div class="qhzx-rotate-slider__icon">
+          <i class="fas fa-rocket"></i>
+        </div>
+        <div class="qhzx-rotate-slider__slide">
+          <div class="qhzx-rotate-slider__inner">
+            <h2>上线快</h2>
+            <p>常规网站最快3天上线，不误商机！</p>
+            <p>快速交付，让您生意早日开花！</p>
+          </div>
+        </div>
+      </li>
+      <li class="qhzx-rotate-slider__item" role="listitem" aria-label="引流客户">
+        <div class="qhzx-rotate-slider__icon">
+          <i class="fas fa-magnet"></i>
+        </div>
+        <div class="qhzx-rotate-slider__slide">
+          <div class="qhzx-rotate-slider__inner">
+            <h2>能引流</h2>
+            <p>结合营销逻辑和百度SEO优化引流！</p>
+            <p>让客户主动找上门，生意更红火！</p>
+          </div>
+        </div>
+      </li>
+      <li class="qhzx-rotate-slider__item" role="listitem" aria-label="全平台适配">
+        <div class="qhzx-rotate-slider__icon">
+          <i class="fas fa-mobile-alt"></i>
+        </div>
+        <div class="qhzx-rotate-slider__slide">
+          <div class="qhzx-rotate-slider__inner">
+            <h2>全平台适配</h2>
+            <p>电脑、手机、平板，效果都专业！</p>
+            <p>响应式设计，用户体验满分！</p>
+          </div>
+        </div>
+      </li>
+    </ul>
   </div>
+  <svg>
+    <defs>
+      <clipPath id="qhzx-slideClip">
+        <path />
+      </clipPath>
+    </defs>
+  </svg>
+  <footer class="qhzx-rotate-slider__footer">
+    <p><strong>青花卓越</strong></p>
+    <p>地址：重庆市渝中区</p>
+    <p>电话：136 4056 6324</p>
+    <p>邮箱：504677424@qq.com / laishi886@hotmail.com</p>
+  </footer>
 
   <script>
-    const iframe = document.getElementById("clipIframe");
-    iframe.addEventListener("load", () => {
-      iframe.classList.add("loaded");
-      document.getElementById("loading-text").style.display = "none";
-    });
-  </script>
+    class QhzxRotateSlider {
+      constructor(selector, config = {}) {
+        this.slider = document.querySelector(selector);
+        if (!this.slider) {
+          console.error('滑块容器不存在');
+          return;
+        }
+        this.config = {
+          slideHeight: 360,
+          slideWidth: 480,
+          interval: 4000,
+          ...config,
+        };
+        this.intervalId = null;
+        this.currentRotation = 0;
+        this.currentSlide = 0;
+        this.init();
+      }
 
+      init() {
+        this.items = document.querySelectorAll('.qhzx-rotate-slider__item');
+        this.slidesContainer = document.querySelector('.qhzx-rotate-slider__slides');
+        if (this.items.length === 0) {
+          console.error('无滑块内容');
+          return;
+        }
+
+        this.slideCount = this.items.length;
+        this.slideAngle = 360 / this.slideCount;
+        this.halfAngleRad = this.slideAngle / 2 * Math.PI / 270;
+        this.innerRadius = 1 / Math.tan(this.halfAngleRad) * this.config.slideWidth / 2;
+        this.outerRadius = Math.sqrt(Math.pow(this.innerRadius + this.config.slideHeight, 2) + Math.pow(this.config.slideWidth / 2, 2));
+        this.upperArcHeight = this.outerRadius - (this.innerRadius + this.config.slideHeight);
+        this.lowerArcHeight = this.innerRadius - (this.innerRadius * Math.cos(this.halfAngleRad));
+        this.slideFullWidth = Math.sin(this.halfAngleRad) * this.outerRadius * 2;
+        this.slideFullHeight = this.upperArcHeight + this.config.slideHeight + this.lowerArcHeight;
+        this.slideSidePadding = (this.slideFullWidth - this.config.slideWidth) / 2;
+        this.fullArcHeight = this.outerRadius - (this.outerRadius * Math.cos(this.halfAngleRad));
+        this.lowerArcOffset = (this.slideFullWidth - Math.sin(this.halfAngleRad) * this.innerRadius * 2) / 2;
+
+        // Set CSS variables
+        document.documentElement.style.setProperty('--qhzx-slide-height', `${this.config.slideHeight}px`);
+        document.documentElement.style.setProperty('--qhzx-slide-width', `${this.config.slideWidth}px`);
+        document.documentElement.style.setProperty('--qhzx-outer-radius', `${this.outerRadius * 2}px`);
+        document.documentElement.style.setProperty('--qhzx-upper-arc-height', `${this.upperArcHeight}px`);
+        document.documentElement.style.setProperty('--qhzx-slide-side-padding', `${this.slideSidePadding}px`);
+        document.documentElement.style.setProperty('--qhzx-lower-arc-height', `${this.lowerArcHeight}px`);
+        document.documentElement.style.setProperty('--qhzx-inner-radius', `${this.innerRadius}px`);
+
+        // Set clip path
+        let pathCoords = `M 0 ${this.fullArcHeight}`;
+        pathCoords += ` A ${this.outerRadius} ${this.outerRadius} 0 0 1 ${this.slideFullWidth} ${this.fullArcHeight}`;
+        pathCoords += ` L ${this.slideFullWidth - this.lowerArcOffset} ${this.slideFullHeight}`;
+        pathCoords += ` A ${this.innerRadius} ${this.innerRadius} 0 0 0 ${this.lowerArcOffset} ${this.slideFullHeight} Z`;
+        document.querySelector('#qhzx-slideClip path').setAttribute('d', pathCoords);
+
+        // Apply styles to items
+        this.items.forEach((item, i) => {
+          item.style.transform = `translateX(-50%) rotate(${this.slideAngle * i}deg) translateY(-${this.upperArcHeight}px)`;
+        });
+
+        // Set initial active item
+        this.updateActiveItem();
+
+        // Start rotation
+        this.start();
+      }
+
+      updateActiveItem() {
+        this.items.forEach((item, i) => {
+          item.classList.toggle('qhzx-rotate-slider__item--active', i === this.currentSlide);
+        });
+      }
+
+      next() {
+        this.currentRotation -= this.slideAngle;
+        this.currentSlide = (this.currentSlide + 1) % this.slideCount;
+        this.update();
+      }
+
+      update() {
+        if (!this.slidesContainer.classList.contains('qhzx-rotate-slider__slides--animate')) {
+          this.slidesContainer.classList.add('qhzx-rotate-slider__slides--animate');
+        }
+        this.slidesContainer.style.transform = `translateX(-50%) rotate(${this.currentRotation}deg)`;
+        this.updateActiveItem();
+      }
+
+      start() {
+        if (this.intervalId) return;
+        this.intervalId = setInterval(() => this.next(), this.config.interval);
+      }
+
+      destroy() {
+        clearInterval(this.intervalId);
+      }
+    }
+
+    const slider = new QhzxRotateSlider('.qhzx-rotate-slider');
+  </script>
 </body>
 </html>

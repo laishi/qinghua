@@ -4,7 +4,7 @@
 
 .parallaxFlipping {
   width: 100%;
-  /* background-color: rgb(var(--wave-color-white1)); */
+  background-color: rgb(var(--wave-color));
   margin: 0 auto;
 }
 
