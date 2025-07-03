@@ -105,23 +105,24 @@
   align-items: center;
   font-size: 1.2em;
   overflow: hidden;
+  color: rgba(200, 200, 200, 0.8);
 }
 
 .menu-content .menus .menu .subtitle p {
   opacity: 0;
-  transform: translateY(10em);
+  transform: translateY(15em);
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
 .menu-content .menus .menu:hover .subtitle p:nth-child(1) {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0.8em);
   transition-delay: 0.1s;
 }
 
 .menu-content .menus .menu:hover .subtitle p:nth-child(2) {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(1em);
   transition-delay: 0.3s;
 }
 

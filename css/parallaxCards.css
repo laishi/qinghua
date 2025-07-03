@@ -13,7 +13,7 @@
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 2em;
   padding: 5em;
   padding-bottom: 2em;
 }
@@ -21,7 +21,7 @@
 .parallaxFlipping .flippingCard {
   flex: 1;
   width: 100%;
-  max-width: 380px;
+  max-width: 300px;
   min-width: 250px;
   aspect-ratio: 1 / 1;
   cursor: pointer;
@@ -31,7 +31,7 @@
 
 .parallaxFlipping .flippingCard:nth-child(2) {
   flex: 0 0 38vw;
-  max-width: 500px;
+  max-width: 380px;
   min-width: 300px;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
@@ -93,12 +93,11 @@
 .parallaxFlipping .cardItem h1 {
   font-size: 2em;
   line-height: 2em;
-  letter-spacing: 0.5em;
+  letter-spacing: 0.1em;
 }
 
 .parallaxFlipping .cardItem h3 {
   font-size: 1.5em;
-  letter-spacing: 0.2em;
 }
 
 .parallaxFlipping .cardItem .cardItem-front i {
