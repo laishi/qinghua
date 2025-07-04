@@ -15,7 +15,7 @@
     position: relative;
     width: 100%;
     height: 100vh;
-    transition: width 0.5s, transform 0.5s;
+    transition: transform var(--detailPage-move);
     will-change: transform;
 }
 
@@ -34,7 +34,7 @@
     height: 100vh;
     background-color: black;
     background-color: var(--bubble-color-end);
-    transition: transform var(--detailPage-move);
+    /* transition: transform var(--detailPage-move); */
     z-index: -1;
     cursor: pointer;
     will-change: transform;
@@ -141,6 +141,7 @@
 }
 
 .detailGrid:hover {
+    flex: 2;
     cursor: pointer;
     background-color: rgb(255, 255, 255);
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2), 0px -5px 10px rgba(0, 0, 0, 0.2),
@@ -230,8 +231,8 @@
         liquidGlassBreathe 2.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     pointer-events: auto;
     cursor: pointer;
-    width: 5em;
-    height: 5em;
+    width: var(--bubble-size);
+    height: var(--bubble-size);
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.05));
     -webkit-backdrop-filter: blur(15px) saturate(200%);
     backdrop-filter: blur(15px) saturate(200%);
