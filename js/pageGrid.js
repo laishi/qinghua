@@ -161,7 +161,7 @@ class SliderDetailGrid {
                     bubbleLoader.appendChild(backText);
                 }, { once: true });
             }
-        }, 1000);
+        }, 3000);
 
         iframe.addEventListener('error', () => {
             container.style.background = 'radial-gradient(circle, #ff4d4d, #b32424)';
