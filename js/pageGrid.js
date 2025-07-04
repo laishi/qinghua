@@ -227,12 +227,23 @@ class SliderDetailGrid {
 
                     detailGrid.addEventListener("click", (e) => {
                         const clickX = e.clientX;
+                        const enterFrom = clickX < window.innerWidth / 2 ? "left" : "right";
+                        sessionStorage.setItem("lastEnterFrom", enterFrom);  // ✅ 保存
+
                         this.setState({
                             viewer: "detailView",
-                            detailGrid: { index, perRow, totalGrids, imgurl, linkurl, clickX }
+                            detailGrid: {
+                                index,
+                                perRow,
+                                totalGrids,
+                                imgurl,
+                                linkurl,
+                                enterFrom  // ✅ 存下来
+                            }
                         });
                         this.navigateTo("detailView");
                     });
+
                 }
 
                 gridRow.appendChild(detailGrid);
@@ -243,10 +254,9 @@ class SliderDetailGrid {
 
     navigateTo(view) {
         if (view === "detailView") {
-            const index = this.state.detailGrid.index;
+            const { index, enterFrom, ...rest } = this.state.detailGrid;
             const hash = `#detailView/template/${index + 1}`;
-            const { clickX, ...safeData } = this.state.detailGrid;
-            history.pushState({ view, ...safeData }, "", hash);
+            history.pushState({ view, ...rest, index, enterFrom }, "", hash);  // ✅ 带入方向
             this.goToDetail();
         } else {
             history.pushState({ view: "mainView" }, "", "/");
@@ -255,18 +265,14 @@ class SliderDetailGrid {
     }
 
     goToDetail() {
-        const { index, perRow, imgurl, linkurl, clickX } = this.state.detailGrid;
+        const { index, perRow, imgurl, linkurl, enterFrom } = this.state.detailGrid;
 
         this.circleLoaderIframe(this.detailPage, linkurl);
         document.body.style.overflow = "hidden";
 
-        const rowIndex = index % perRow;
-        const middleIndex = Math.floor(perRow / 2);
-        const moveDirection = clickX < window.innerWidth / 2 ? "left" : "right";
-
         this.detailPage.style.transform = `translateY(${window.scrollY}px)`;
 
-        if (moveDirection === "left") {
+        if (enterFrom === "left") {
             this.detailPage.style.left = "-100%";
             this.mainPage.style.transform = "translateX(100%)";
         } else {
@@ -274,6 +280,8 @@ class SliderDetailGrid {
             this.mainPage.style.transform = "translateX(-100%)";
         }
     }
+
+
 
     goToMain() {
         this.setState({ viewer: "mainView" });
@@ -288,10 +296,16 @@ class SliderDetailGrid {
         if (!state || state.view === "mainView") {
             this.goToMain();
         } else if (state.view === "detailView") {
-            this.setState({ viewer: "detailView", detailGrid: state });
+            // 如果刷新了，可能 state 是 null
+            const enterFrom = state.enterFrom || sessionStorage.getItem("lastEnterFrom") || "right";
+            this.setState({
+                viewer: "detailView",
+                detailGrid: { ...state, enterFrom }
+            });
             this.goToDetail();
         }
     }
+
 
     onHashChange() {
         const hash = location.hash.slice(1);
@@ -314,10 +328,13 @@ class SliderDetailGrid {
         const perRow = Math.min(Math.max(Math.floor(this.detailGrids.clientWidth / 300), 2), 5);
         const totalGrids = this.templates.length + 1;
 
+        const enterFrom = sessionStorage.getItem("lastEnterFrom") || "right";
         this.setState({
             viewer: "detailView",
-            detailGrid: { index, perRow, totalGrids, imgurl, linkurl, clickX: window.innerWidth / 2 }
+            detailGrid: { index, perRow, totalGrids, imgurl, linkurl, enterFrom }
         });
+
+
         this.goToDetail();
     }
 }
