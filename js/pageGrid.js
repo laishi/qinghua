@@ -339,4 +339,8 @@ class SliderDetailGrid {
     }
 }
 
-const gallery = new SliderDetailGrid();
+window.onload = function() {
+  console.log("所有资源（包括图片、样式、脚本等）加载完成后执行");
+  
+  const gallery = new SliderDetailGrid();
+};
