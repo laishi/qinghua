@@ -141,6 +141,7 @@
     height: 100%;
     background-image: radial-gradient(circle, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.5) 100%);
     transition: background-image 0.1s linear;
+    pointer-events: none;
 }
 
 .detailGrid:hover .imgMask {
