@@ -19,6 +19,7 @@ const templates = [
     "18-creative-free-responsive-html5-business-template",
     "19-darktouch-corporate-portfolio-bootstrap-responsive-web-template"
 ];
+
 class SliderDetailGrid {
     constructor() {
         this.templates = templates;
@@ -28,9 +29,7 @@ class SliderDetailGrid {
         this.pageSlider = document.getElementById("pageSlider");
         this.detailGrids = null;
         this.detailPage = null;
-
         this.state = { viewer: "mainView", detailPage: {}, detailGrid: {} };
-
         this.init();
     }
 
@@ -161,36 +160,34 @@ class SliderDetailGrid {
             container.innerHTML = `<div class="error-text">加载失败: ${src}</div>`;
         });
     }
-
     injectImageIntoGrid(grid, linkurl, imgurl, info) {
-        const link = Object.assign(document.createElement("a"), {
-            href: linkurl,
-            target: "_blank"
-        });
+        const link = document.createElement("a");
+        link.href = linkurl;
+        link.target = "_blank";
         link.addEventListener("click", (e) => e.preventDefault());
-        link.appendChild(
-            Object.assign(document.createElement("img"), {
-                src: imgurl,
-                loading: "lazy"
-            })
-        );
 
+        const img = document.createElement("img");
+        img.src = imgurl;
+        img.loading = "lazy";
+        link.appendChild(img);
+        
+        // Add imgMask overlay
+        const imgMask = document.createElement("div");
+        imgMask.className = "imgMask";
+        
         const gridInfo = document.createElement("div");
         gridInfo.className = "gridInfo";
-        info
-            .split("/")
-            .slice(-2, -1)[0]
-            .split("-")
-            .forEach((keyword) => {
-                gridInfo.appendChild(
-                    Object.assign(document.createElement("div"), {
-                        className: "infoKeywords",
-                        innerHTML: `<h3>${keyword}</h3>`
-                    })
-                );
-            });
-
-        grid.append(link, gridInfo);
+        const keywords = info.split("/").slice(-2, -1)[0].split("-");
+        keywords.forEach((keyword) => {
+            const keywordDiv = document.createElement("div");
+            keywordDiv.className = "infoKeywords";
+            keywordDiv.innerHTML = `<h3>${keyword}</h3>`;
+            gridInfo.appendChild(keywordDiv);
+        });
+        
+        grid.appendChild(link);
+        grid.appendChild(gridInfo);
+        grid.appendChild(imgMask);
     }
 
     createDetailGrids() {
@@ -216,8 +213,8 @@ class SliderDetailGrid {
 
                 if (count === totalGrids) {
                     detailGrid.classList.add("enddetailGrid");
-                    detailGrid.innerHTML = `<a href="/temp.html" target="/">更多模板 ➤</a>`;
-                    detailGrid.style.cursor = "pointer";
+                    // detailGrid.innerText = ">";
+                    detailGrid.innerHTML = `<a href="${this.tempLink}" target="_blank"> ➤ </a>`;
                 } else {
                     const index = count - 1;
                     const linkurl = `${this.tempPath}${this.templates[index]}/index.html`;
@@ -228,19 +225,9 @@ class SliderDetailGrid {
                     detailGrid.addEventListener("click", (e) => {
                         const clickX = e.clientX;
                         const enterFrom = clickX < window.innerWidth / 2 ? "left" : "right";
-                        sessionStorage.setItem("lastEnterFrom", enterFrom);  // ✅ 保存
+                        sessionStorage.setItem("lastEnterFrom", enterFrom);
 
-                        this.setState({
-                            viewer: "detailView",
-                            detailGrid: {
-                                index,
-                                perRow,
-                                totalGrids,
-                                imgurl,
-                                linkurl,
-                                enterFrom  // ✅ 存下来
-                            }
-                        });
+                        this.setState({ viewer: "detailView", detailGrid: { index, perRow, totalGrids, imgurl, linkurl, enterFrom } });
                         this.navigateTo("detailView");
                     });
 
@@ -256,7 +243,7 @@ class SliderDetailGrid {
         if (view === "detailView") {
             const { index, enterFrom, ...rest } = this.state.detailGrid;
             const hash = `#detailView/template/${index + 1}`;
-            history.pushState({ view, ...rest, index, enterFrom }, "", hash);  // ✅ 带入方向
+            history.pushState({ view, ...rest, index, enterFrom }, "", hash);
             this.goToDetail();
         } else {
             history.pushState({ view: "mainView" }, "", "/");
@@ -281,8 +268,6 @@ class SliderDetailGrid {
         }
     }
 
-
-
     goToMain() {
         this.setState({ viewer: "mainView" });
         document.body.style.overflow = "";
@@ -296,7 +281,6 @@ class SliderDetailGrid {
         if (!state || state.view === "mainView") {
             this.goToMain();
         } else if (state.view === "detailView") {
-            // 如果刷新了，可能 state 是 null
             const enterFrom = state.enterFrom || sessionStorage.getItem("lastEnterFrom") || "right";
             this.setState({
                 viewer: "detailView",
@@ -306,7 +290,6 @@ class SliderDetailGrid {
         }
     }
 
-
     onHashChange() {
         const hash = location.hash.slice(1);
         const parts = hash.split("/");
@@ -315,11 +298,8 @@ class SliderDetailGrid {
             return;
         }
 
-        console.log("hash: ", parts)
-
         const indexStr = parts[2];
         const index = parseInt(indexStr, 10) - 1;
-        console.log("index", index);
 
         if (isNaN(index) || index < 0 || index >= this.templates.length) {
             this.goToMain();
@@ -344,6 +324,4 @@ class SliderDetailGrid {
 
 window.onload = function () {
     const gallery = new SliderDetailGrid();
-    console.log("所有资源（包括图片、样式、脚本等）加载完成后执行");
-
 };
