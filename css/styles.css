@@ -329,11 +329,9 @@ a:hover {
 	width: 83%;
 	text-align: center;
 	margin: 23% auto 24px auto;
-	font-family: 'Oswald', sans-serif;
 }
 
 .hero-text p {
-	font-family: 'Oswald', sans-serif;
 	padding: 0;
 	margin: 12px 8% 0;
 	text-shadow: 0px 1px 2px rgba(0, 0, 0, .2);
@@ -415,7 +413,6 @@ a:hover {
 
 .navbar-brand b {
 	color: #008E4D;
-	font-family: 'Oswald', sans-serif;
 	font-weight: 900;
 }
 
@@ -459,7 +456,6 @@ a:hover {
 	margin: 17px;
 	padding: 6px 0px !important;
 	border-radius: 5px;
-	font-family: 'Oswald', sans-serif;
 	font-weight: 400;
 }
 
@@ -1029,7 +1025,6 @@ hr {
 
 body {
 	margin: 0;
-	font-family: Arial, sans-serif;
 }
 
 #navigation {

@@ -27,5 +27,4 @@ html {
   margin: 0;
   padding: 0;
   background-color: rgb(var(--background-color));
-  font-family: var(--font-mono);
 }
