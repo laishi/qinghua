@@ -53,6 +53,7 @@ const templates = [
 
 class SliderDetailGrid {
     constructor() {
+        this.rootUrl = window.location.origin + window.location.pathname;
         this.templates = templates.slice(0, 19);
         this.tempPath = "./assets/qinghua-template/spa/";
         this.tempLink = "./assets/pages/temp.html";
@@ -60,12 +61,15 @@ class SliderDetailGrid {
         this.pageSlider = document.getElementById("pageSlider");
         this.detailGrids = null;
         this.detailPage = null;
+        this.endLink = `<a href="${this.tempLink}"> ➤ </a>`;
         this.state = { viewer: "mainView", detailPage: {}, detailGrid: {} };
         this.init();
     }
 
     init() {
-        this.setAssets()
+        console.log(this.rootUrl);
+        
+        this.reconfig()
         this.createGridPage();
         this.createDetailPage();
         this.createDetailGrids();
@@ -73,13 +77,15 @@ class SliderDetailGrid {
         this.bindEvents();
     }
 
-    setAssets() {
+    reconfig() {
         const currentPath = window.location.href;
         const isRoot = currentPath === window.location.origin + '/' || currentPath === window.location.origin;
         const isDetailView = currentPath === window.location.origin + '/#detailView';
 
         if (!isRoot && !isDetailView) {
+            this.templates = templates;
             this.tempPath = "../qinghua-template/spa/";
+            this.endLink = '<a href="/#temp"> 谢谢 </a>'
         }
     }
 
@@ -202,6 +208,7 @@ class SliderDetailGrid {
             container.innerHTML = `<div class="error-text">加载失败: ${src}</div>`;
         });
     }
+    
     injectImageIntoGrid(grid, linkurl, imgurl, info) {
         const link = document.createElement("a");
         link.href = linkurl;
@@ -256,7 +263,7 @@ class SliderDetailGrid {
                 if (count === totalGrids) {
                     detailGrid.classList.add("enddetailGrid");
                     // detailGrid.innerText = ">";
-                    detailGrid.innerHTML = `<a href="${this.tempLink}" target="_blank"> ➤ </a>`;
+                    detailGrid.innerHTML = this.endLink;
                 } else {
                     const index = count - 1;
                     const linkurl = `${this.tempPath}${this.templates[index]}/index.html`;
@@ -288,7 +295,7 @@ class SliderDetailGrid {
             history.pushState({ view, ...rest, index, enterFrom }, "", hash);
             this.goToDetail();
         } else {
-            history.pushState({ view: "mainView" }, "", "/");
+            history.pushState({ view: "mainView" }, "", this.rootUrl);
             this.goToMain();
         }
     }
