@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid 自身放大效果</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            grid-auto-flow: dense;
+        }
+
+        .grid-item {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition:
+                transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+                box-shadow 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+        }
+
+        .grid-item img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .grid-item .title {
+            padding: 12px;
+            font-size: 14px;
+        }
+
+        /* 放大状态 */
+        .grid-item.zoomed {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            width: 70vw;
+            height: 60vh;
+            max-width: 98vw;
+            max-height: 98vh;
+            transform: translate(-50%, -50%) scale(1);
+            z-index: 10;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            pointer-events: auto;
+            transition:
+                width 0.5s linear,
+                height 0.5s linear,
+                left 0.5s linear,
+                top 0.5s linear,
+                transform 0.5s linear,
+                box-shadow 0.5s linear;
+        }
+
+        .grid-item.zoomed img {
+            height: 60%;
+        }
+
+        .grid-item.zoomed .title {
+            font-size: 18px;
+            padding: 20px;
+        }
+
+        /* 关闭按钮 */
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border-radius: 50%;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            cursor: pointer;
+            z-index: 11;
+        }
+
+        .grid-item.zoomed .close-btn {
+            display: flex;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 style="margin-bottom: 20px; text-align: center;">Grid 自身放大效果 (38个项目)</h1>
+        <div class="grid" id="imageGrid"></div>
+    </div>
+
+    <script>
+        const imageGrid = document.getElementById('imageGrid');
+
+        for (let i = 0; i < 38; i++) {
+            const gridItem = document.createElement('div');
+            gridItem.className = 'grid-item';
+            const randomId = Math.floor(Math.random() * 1000);
+            gridItem.innerHTML = `
+        <img src="https://picsum.photos/id/${randomId}/300/200" alt="图片 ${i + 1}">
+        <div class="title">项目 ${i + 1}</div>
+        <div class="close-btn">×</div>
+    `;
+            imageGrid.appendChild(gridItem);
+        }
+
+        // 放大动画
+        let zoomedClone = null;
+        function zoomGridItem(original) {
+            if (zoomedClone) return; // 只允许一个
+            const rect = original.getBoundingClientRect();
+            const clone = original.cloneNode(true);
+            clone.style.position = 'fixed';
+            clone.style.left = rect.left + 'px';
+            clone.style.top = rect.top + 'px';
+            clone.style.width = rect.width + 'px';
+            clone.style.height = rect.height + 'px';
+            clone.style.margin = 0;
+            clone.style.zIndex = 1000;
+            clone.classList.add('zoomed');
+            clone.style.transition = 'all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            document.body.appendChild(clone);
+            original.style.visibility = 'hidden';
+
+            // 关闭按钮事件
+            clone.querySelector('.close-btn').addEventListener('click', function (e) {
+                e.stopPropagation();
+                closeZoom();
+            });
+
+            // 动画到中心
+            setTimeout(() => {
+                clone.style.left = '50%';
+                clone.style.top = '50%';
+                clone.style.transform = 'translate(-50%, -50%)';
+                clone.style.width = '70vw';
+                clone.style.height = '60vh';
+                clone.style.maxWidth = '98vw';
+                clone.style.maxHeight = '98vh';
+                clone.style.boxShadow = '0 10px 30px rgba(0,0,0,0.3)';
+            }, 10);
+
+            zoomedClone = { clone, original };
+        }
+
+        // 关闭放大
+        function closeZoom() {
+            if (!zoomedClone) return;
+            const { clone, original } = zoomedClone;
+            const rect = original.getBoundingClientRect();
+            clone.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+            clone.style.left = rect.left + 'px';
+            clone.style.top = rect.top + 'px';
+            clone.style.width = rect.width + 'px';
+            clone.style.height = rect.height + 'px';
+            clone.style.transform = '';
+            clone.style.boxShadow = '0 3px 10px rgba(0,0,0,0.1)';
+            setTimeout(() => {
+                clone.remove();
+                original.style.visibility = '';
+                zoomedClone = null;
+            }, 400);
+        }
+
+        // 事件绑定
+        imageGrid.addEventListener('click', function (e) {
+            const item = e.target.closest('.grid-item');
+            if (!item) return;
+            if (zoomedClone) return;
+            zoomGridItem(item);
+        });
+
+        // 点击空白关闭
+        document.addEventListener('click', function (e) {
+            if (zoomedClone && !e.target.closest('.grid-item.zoomed')) {
+                closeZoom();
+            }
+        }, true);
+    </script>
+
+</body>
+
+</html>

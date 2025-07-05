@@ -1,60 +1,10 @@
-const templates = [
-    "01-add-life-health-fitness-free-bootstrap-html5-template",
-    "02-reveal",
-    "03-agile-agency-free-bootstrap-web-template",
-    "04-amaze-photography-bootstrap-html5-template",
-    "05-aroma-beauty-and-spa-responsive-bootstrap-template",
-    "06-avenger-multi-purpose-responsive-html5-bootstrap-template",
-    "07-b-school-free-education-html5-website-template",
-    "08-beauty-salon-bootstrap-html5-template",
-    "09-brand-html5-app-landing-page-responsive-web-template",
-    "10-businessline-corporate-portfolio-bootstrap-responsive-web-template",
-    "11-businessr-corporate-bootstrap-responsive-web-template",
-    "12-car-repair-html5-bootstrap-template",
-    "13-car-zone-automobile-bootstrap-responsive-web-template",
-    "14-city-square-bootstrap-responsive-web-template",
-    "15-cloud-hosting-free-bootstrap-responsive-website-template",
-    "16-clouds-html5-multipurpose-landing-page-template",
-    "17-coffee-shop-free-html5-template",
-    "18-creative-free-responsive-html5-business-template",
-    "19-darktouch-corporate-portfolio-bootstrap-responsive-web-template",
-    "20-delite-music-html5-bootstrap-responsive-web-template",
-    "21-eat-restaurant-bootstrap-html5-template",
-    "22-elegant-free-multi-purpose-bootstrap-responsive-template",
-    "23-enlive-corporate-free-html5-bootstrap-web-template",
-    "24-fit-healthy-fitness-and-gym-html5-bootstrap-theme",
-    "25-fitness-zone-html5-bootstrap-responsive-web-template",
-    "26-frames-corporate-bootstrap-free-html5-template",
-    "27-free-bootstrap-template-real-estate-my-home",
-    "28-free-bootstrap-template-restaurant-website-treehut",
-    "29-free-bootstrap-template-rockline-business",
-    "30-free-portfolio-html5-responsive-website-sam",
-    "getdoctor-free-bootstrap-responsive-website-template",
-    "golden-hotel-free-html5-bootstrap-web-template",
-    "grand-free-bootstrap-responsive-website-template",
-    "green-corp-flat-free-responsive-mobile-website",
-    "iam-html5-responsive-portfolio-resume-template",
-    "iclick-photography-bootstrap-free-website-template",
-    "idata-hosting-free-bootstrap-responsive-website-template",
-    "ideal-interior-design-free-bootstrap-website-template",
-    "john-bootstrap-one-page-html5-free-resume-template",
-    "johndoe-portfolio-resume-bootstrap-template",
-    "line-free-app-landing-page-responsive-web-template",
-    "lovely-wedding-bootstrap-free-website-template",
-    "me-resume-personal-portfolio-responsive-template",
-    "mobile-app-free-one-page-responsive-html5-landing-page",
-    "relax-interior-free-bootstrap-responsive-website-template",
-    "rocket-business-bootstrap-free-responsive-web-theme",
-    "skytouch-onepage-bootstrap-responsive-web-template",
-    "smart-interior-designs-html5-bootstrap-web-template",
-    "speed-hosting-bootstrap-free-html5-template"
-];
+const templates = ["01-add-life-health-fitness-free-bootstrap-html5-template", "02-reveal", "03-agile-agency-free-bootstrap-web-template", "04-amaze-photography-bootstrap-html5-template", "05-aroma-beauty-and-spa-responsive-bootstrap-template", "06-avenger-multi-purpose-responsive-html5-bootstrap-template", "07-b-school-free-education-html5-website-template", "08-beauty-salon-bootstrap-html5-template", "09-brand-html5-app-landing-page-responsive-web-template", "10-businessline-corporate-portfolio-bootstrap-responsive-web-template", "11-businessr-corporate-bootstrap-responsive-web-template", "12-car-repair-html5-bootstrap-template", "13-car-zone-automobile-bootstrap-responsive-web-template", "14-city-square-bootstrap-responsive-web-template", "15-cloud-hosting-free-bootstrap-responsive-website-template", "16-clouds-html5-multipurpose-landing-page-template", "17-coffee-shop-free-html5-template", "18-creative-free-responsive-html5-business-template", "19-darktouch-corporate-portfolio-bootstrap-responsive-web-template", "20-delite-music-html5-bootstrap-responsive-web-template", "21-eat-restaurant-bootstrap-html5-template", "22-elegant-free-multi-purpose-bootstrap-responsive-template", "23-enlive-corporate-free-html5-bootstrap-web-template", "24-fit-healthy-fitness-and-gym-html5-bootstrap-theme", "25-fitness-zone-html5-bootstrap-responsive-web-template", "26-frames-corporate-bootstrap-free-html5-template", "27-free-bootstrap-template-real-estate-my-home", "28-free-bootstrap-template-restaurant-website-treehut", "29-free-bootstrap-template-rockline-business", "30-free-portfolio-html5-responsive-website-sam", "getdoctor-free-bootstrap-responsive-website-template", "golden-hotel-free-html5-bootstrap-web-template", "grand-free-bootstrap-responsive-website-template", "green-corp-flat-free-responsive-mobile-website", "iam-html5-responsive-portfolio-resume-template", "iclick-photography-bootstrap-free-website-template", "idata-hosting-free-bootstrap-responsive-website-template", "ideal-interior-design-free-bootstrap-website-template", "john-bootstrap-one-page-html5-free-resume-template", "johndoe-portfolio-resume-bootstrap-template", "line-free-app-landing-page-responsive-web-template", "lovely-wedding-bootstrap-free-website-template", "me-resume-personal-portfolio-responsive-template", "mobile-app-free-one-page-responsive-html5-landing-page", "relax-interior-free-bootstrap-responsive-website-template", "rocket-business-bootstrap-free-responsive-web-theme", "skytouch-onepage-bootstrap-responsive-web-template", "smart-interior-designs-html5-bootstrap-web-template", "speed-hosting-bootstrap-free-html5-template"];
 
 
 class SliderDetailGrid {
     constructor() {
         this.rootUrl = window.location.origin + window.location.pathname;
-        this.templates = templates.slice(0, 19);
+        this.templates = templates.slice(0, 12);
         this.tempPath = "./assets/qinghua-template/spa/";
         this.tempLink = "./assets/pages/temp.html";
         this.mainPage = document.querySelector(".mainPage");
@@ -67,9 +17,7 @@ class SliderDetailGrid {
     }
 
     init() {
-        console.log(this.rootUrl);
-        
-        this.reconfig()
+        this.reconfig();
         this.createGridPage();
         this.createDetailPage();
         this.createDetailGrids();
@@ -78,15 +26,17 @@ class SliderDetailGrid {
     }
 
     reconfig() {
-        const currentPath = window.location.href;
-        const isRoot = currentPath === window.location.origin + '/' || currentPath === window.location.origin;
-        const isDetailView = currentPath === window.location.origin + '/#detailView';
 
-        if (!isRoot && !isDetailView) {
+        if (this.rootUrl.includes('temp.html')) {
+            console.log('subpath路径包含 pages:', this.rootUrl);
             this.templates = templates;
-            this.tempPath = "../qinghua-template/spa/";
-            this.endLink = '<a href="/#temp"> 谢谢 </a>'
+            this.endLink = '<a href="/"> < 回到首页 </a>'
         }
+        if (this.rootUrl.includes('pages')) {
+            const headerTitle = document.querySelector('.header-content');
+            headerTitle.style.height = '30vh';
+        }
+
     }
 
     bindEvents() {
@@ -208,7 +158,7 @@ class SliderDetailGrid {
             container.innerHTML = `<div class="error-text">加载失败: ${src}</div>`;
         });
     }
-    
+
     injectImageIntoGrid(grid, linkurl, imgurl, info) {
         const link = document.createElement("a");
         link.href = linkurl;
@@ -301,6 +251,7 @@ class SliderDetailGrid {
     }
 
     goToDetail() {
+        this.detailPage.style.opacity = 1;
         const { index, perRow, imgurl, linkurl, enterFrom } = this.state.detailGrid;
 
         this.circleLoaderIframe(this.detailPage, linkurl);
@@ -318,6 +269,7 @@ class SliderDetailGrid {
     }
 
     goToMain() {
+        this.detailPage.style.opacity = 0;
         this.setState({ viewer: "mainView" });
         document.body.style.overflow = "";
 

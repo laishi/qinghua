@@ -39,6 +39,7 @@
     cursor: pointer;
     will-change: transform;
     overflow: hidden;
+    opacity: 0;
 }
 
 .homeHeader {
