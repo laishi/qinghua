@@ -51,7 +51,7 @@ class SliderDetailGrid {
 
     navEvents() {
         window.addEventListener("popstate", this.handlePopState.bind(this));
-        window.addEventListener("hashchange", () => this.onHashChange());
+        window.addEventListener("hashchange", () => this.onHashChange(this));
         this.onHashChange();
     }
 
@@ -154,7 +154,7 @@ class SliderDetailGrid {
                     bubbleLoader.appendChild(backText);
                 }, { once: true });
             }
-        }, 3000);
+        }, 1000);
 
         iframe.addEventListener('error', () => {
             container.style.background = 'radial-gradient(circle, #ff4d4d, #b32424)';
@@ -315,8 +315,12 @@ class SliderDetailGrid {
             return;
         }
 
+        console.log("hash: ", parts)
+
         const indexStr = parts[2];
         const index = parseInt(indexStr, 10) - 1;
+        console.log("index", index);
+
         if (isNaN(index) || index < 0 || index >= this.templates.length) {
             this.goToMain();
             return;
@@ -334,13 +338,12 @@ class SliderDetailGrid {
             detailGrid: { index, perRow, totalGrids, imgurl, linkurl, enterFrom }
         });
 
-
         this.goToDetail();
     }
 }
 
-window.onload = function() {
-  console.log("所有资源（包括图片、样式、脚本等）加载完成后执行");
-  
-  const gallery = new SliderDetailGrid();
+window.onload = function () {
+    const gallery = new SliderDetailGrid();
+    console.log("所有资源（包括图片、样式、脚本等）加载完成后执行");
+
 };
