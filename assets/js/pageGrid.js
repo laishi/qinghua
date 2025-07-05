@@ -323,6 +323,6 @@ class SliderDetailGrid {
     }
 }
 
+const gallery = new SliderDetailGrid();
 window.onload = function () {
-    const gallery = new SliderDetailGrid();
 };
