@@ -1,0 +1,229 @@
+---
+---
+
+<!-- HTML -->
+<div class="ball">
+  <canvas id="ballCanvas"></canvas>
+</div>
+
+<!-- CSS -->
+<style>
+  .ball {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+
+  canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+</style>
+
+<!-- Script -->
+ 
+<script type="module" client:load>
+  const config = {
+    ballCount: 38,
+    baseInterval: 1000,
+    gravity: 0.99,
+    fadeSpeed: 0.005,
+    shrinkSpeed: 0.05,
+    growthOnHover: 1,
+    maxRadius: 50,
+    interferenceRadius: 100,
+    interferenceFactor: 1.0,
+    minBallCount: 12,
+    spawnRadiusX: 80,
+    speedScale: 0.05
+  };
+
+  class Ball {
+    constructor(width, height) {
+      this.color = Ball.randomColor();
+      this.radius = Math.random() * 20 + 14;
+      this.startradius = this.radius;
+      this.x = Math.random() * (width - this.radius * 2) + this.radius;
+      this.y = height - this.radius;
+      this.dy = -Math.random() * 4 - 2;
+      this.dx = Math.round((Math.random() - 0.5) * 10);
+      this.vel = Math.random() / 5;
+      this.alpha = 1;
+      this.life = 1;
+    }
+
+    static randomColor() {
+      return `rgba(${Math.floor(Math.random() * 250)},${Math.floor(Math.random() * 250)},${Math.floor(Math.random() * 250)},1)`;
+    }
+
+    update(ctx) {
+      ctx.save();
+      ctx.globalAlpha = this.alpha;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+      ctx.fillStyle = this.color;
+      ctx.fill();
+      ctx.restore();
+    }
+
+    animate(width, height, gravity, mouseX, mouseY, config) {
+      if (mouseX !== null && mouseY !== null) {
+        const distX = this.x - mouseX;
+        const distY = this.y - mouseY;
+        const dist = Math.sqrt(distX * distX + distY * distY);
+        if (dist < config.interferenceRadius && dist > 0) {
+          const force = (config.interferenceRadius - dist) / config.interferenceRadius * config.interferenceFactor;
+          this.dx += (distX / dist) * force;
+          this.dy += (distY / dist) * force;
+        }
+      }
+
+      this.y += this.dy;
+      this.x += this.dx;
+
+      if (this.y + this.radius >= height) {
+        this.dy = -this.dy * gravity;
+        this.y = height - this.radius;
+      } else {
+        this.dy += this.vel;
+      }
+
+      if (this.x + this.radius > width || this.x - this.radius < 0) {
+        this.dx = -this.dx;
+      }
+
+      if (
+        mouseX > this.x - 20 &&
+        mouseX < this.x + 20 &&
+        mouseY > this.y - 50 &&
+        mouseY < this.y + 50 &&
+        this.radius < config.maxRadius
+      ) {
+        this.radius += config.growthOnHover;
+      } else if (this.radius > this.startradius) {
+        this.radius -= config.growthOnHover / 2;
+      }
+
+      this.alpha -= config.fadeSpeed;
+      this.radius -= config.shrinkSpeed;
+      if (this.alpha <= 0 || this.radius <= 0) {
+        this.life = 0;
+      }
+    }
+  }
+
+  class BallAnimation {
+    constructor(canvasId) {
+      this.canvas = document.getElementById(canvasId);
+      this.ctx = this.canvas.getContext("2d");
+      this.balls = [];
+      this.gravity = config.gravity;
+      this.mouseX = null;
+      this.mouseY = null;
+      this.lastMouseX = null;
+      this.lastMouseY = null;
+      this.mouseSpeed = 0;
+      this.initCanvasSize();
+      this.initBalls(config.ballCount);
+      this.registerEvents();
+      this.animate();
+      this.startInterval();
+    }
+
+    getParentSize() {
+      const rect = this.canvas.parentElement.getBoundingClientRect();
+      return { width: rect.width, height: rect.height };
+    }
+
+    initCanvasSize() {
+      const { width, height } = this.getParentSize();
+      const dpr = window.devicePixelRatio || 1;
+      this.canvas.width = width * dpr;
+      this.canvas.height = height * dpr;
+      this.canvas.style.width = width + "px";
+      this.canvas.style.height = height + "px";
+      this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+      this.ctx.scale(dpr, dpr);
+    }
+
+    initBalls(count) {
+      const { width, height } = this.getParentSize();
+      for (let i = 0; i < count; i++) {
+        this.spawnBall(width, height);
+      }
+    }
+
+    spawnBall(width, height) {
+      let x;
+      if (this.mouseX !== null) {
+        x = this.mouseX + (Math.random() - 0.5) * config.spawnRadiusX * 2;
+      } else {
+        x = Math.random() * width;
+      }
+      x = Math.min(Math.max(20, x), width - 20);
+      const ball = new Ball(width, height);
+      ball.x = x;
+      ball.y = height - ball.radius;
+      this.balls.push(ball);
+    }
+
+    registerEvents() {
+      window.addEventListener("resize", () => this.initCanvasSize());
+      window.addEventListener("mousemove", (e) => {
+        this.mouseX = e.clientX;
+        this.mouseY = e.clientY;
+
+        if (this.lastMouseX !== null && this.lastMouseY !== null) {
+          const dx = this.mouseX - this.lastMouseX;
+          const dy = this.mouseY - this.lastMouseY;
+          this.mouseSpeed = Math.sqrt(dx * dx + dy * dy);
+        }
+        this.lastMouseX = this.mouseX;
+        this.lastMouseY = this.mouseY;
+
+        const spawnCount = Math.min(Math.floor(this.mouseSpeed * config.speedScale), 10);
+        const { width, height } = this.getParentSize();
+        for (let i = 0; i < spawnCount; i++) {
+          this.spawnBall(width, height);
+        }
+      });
+    }
+
+    animate() {
+      const loop = () => {
+        const { width, height } = this.getParentSize();
+        this.ctx.clearRect(0, 0, width, height);
+
+        for (const ball of this.balls) {
+          ball.update(this.ctx);
+          ball.animate(width, height, this.gravity, this.mouseX, this.mouseY, config);
+        }
+
+        this.balls = this.balls.filter(b => b.life > 0);
+
+        if (this.balls.length < config.minBallCount) {
+          this.spawnBall(width, height);
+        }
+
+        requestAnimationFrame(loop);
+      };
+      loop();
+    }
+
+    startInterval() {
+      setInterval(() => {
+        const { width, height } = this.getParentSize();
+        this.spawnBall(width, height);
+      }, config.baseInterval);
+    }
+  }
+
+window.addEventListener('load', () => {
+  new BallAnimation("ballCanvas");
+});
+
+</script>
+
+

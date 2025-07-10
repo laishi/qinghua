@@ -1,0 +1,351 @@
+---
+/* 组件说明区 */
+const componentName = "HeaderParallax";
+const componentDescription = "带视差背景和动画人物的头部组件，包含动态高度动画效果，在背景图片和人物图片加载完成后触发，使用类封装脚本逻辑以提高可维护性。";
+
+const { height = '80vh', title = '青花卓越' } = Astro.props;
+
+const headerData = {
+  logo: "/assets/images/icons/mstile-310x310.png",
+  title: title,
+  subtitle: "网站设计塑形象 程序开发筑根基 SEO优化引流量 运维托管保无忧",
+  contact: {
+    phone: "13640566324 18883919122",
+    email: "504677424@qq.com",
+  },
+
+  // bgImage: "https://picsum.photos/1600/900",
+  bgImage: "/assets/images/bg.png",
+  girlImage: "/assets/images/girl.png",
+};
+---
+
+<!-- HTML 区域 -->
+<div class="header-content">
+  <div id="parallaxbg" class="parallaxbg" style={`background-image: linear-gradient(60deg, rgba(36, 23, 87, 0.9), rgba(10, 87, 97, 0.8)), url(${headerData.bgImage})`}>
+  </div>
+
+  <div class="girl" style={`background-image: url(${headerData.girlImage})`}>
+  </div>
+  <div class="header-title">
+    <div class="headerLogo">
+      <img src={headerData.logo} alt="青花卓越 Logo" />
+    </div>
+    <div class="headerText">
+      <h1>{headerData.title}</h1>
+      <h3>{headerData.subtitle}</h3>
+      <h3>
+        <i class="fas fa-phone-alt"></i>
+        {headerData.contact.phone}
+        <i class="fas fa-envelope"></i>
+        {headerData.contact.email}
+      </h3>
+    </div>
+  </div>
+
+  <slot name="waves" />
+  <slot name="menu" />
+</div>
+
+<!-- Style 区域 -->
+<style>
+  :root { 
+    --header-height: 50vh;
+    --log-size: 6em;
+  }
+
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: var(--header-height);
+    position: relative;
+    text-align: center;
+    color: white;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    transition: height 1s ease;
+  }
+
+  .header-content .parallaxbg {
+    position: absolute;
+    width: 110%;
+    height: 110%;
+    background-size: cover;
+    background-position: center;
+    will-change: transform;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: transform 0.1s ease-out;
+  }
+
+  .header-content .girl {
+    position: absolute;
+    bottom: 0;
+    width: 38%;
+    height: 38vh;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    will-change: transform;
+    transition: transform 0.1s ease-out;
+    animation: girlLook 2s ease-in-out infinite alternate;
+    animation-delay: -5s;
+    opacity: 0.9;
+    transform: translateY(-3%);
+  }
+
+  @keyframes girlLook {
+    to {
+      transform: translateY(3%);
+    }
+  }
+
+  .header-content .header-title {
+    position: absolute;
+    width: 100%;
+    height: var(--header-height);
+    background-color: rgba(0, 0, 0, 0.308);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .header-content .header-title .headerLogo {
+    position: absolute;
+    width: var(--log-size);
+    height: var(--log-size);
+    top: 1em;
+  }
+
+  .header-content .header-title .headerLogo img {
+    width: 100%;
+    height: 100%;
+  }
+
+  .header-content .header-title .headerText {
+    position: absolute;
+    top: 8em;
+    text-align: center;
+  }
+
+  .header-content .header-title .headerText h1 {
+    font-size: 2em;
+    margin-bottom: 1em;
+  }
+
+  .header-content .header-title .headerText h3 {
+    font-size: 1.5em;
+    line-height: 1.5em;
+  }
+
+  @property --＠color-1 {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: hsl(98 100% 62%);
+  }
+
+  @property --＠color-2 {
+    syntax: "<color>";
+    inherits: false;
+    initial-value: hsl(204 100% 59%);
+  }
+
+  @keyframes gradient-change {
+    to {
+      --＠color-1: hsl(210 100% 59%);
+      --＠color-2: hsl(310 100% 59%);
+    }
+  }
+
+  .header-content .headerText h1,
+  .header-content .headerText h3 {
+    animation: gradient-change 2s linear infinite alternate;
+    background: linear-gradient(
+      to right in oklch,
+      var(--＠color-1),
+      var(--＠color-2)
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  @layer demo.support {
+    .header-content .headerText h1 {
+      font-size: 5vmin;
+      line-height: 1.25cap;
+    }
+
+    .header-content .headerText h3 {
+      font-size: min(200%, 4vmin);
+      line-height: 1.5;
+    }
+
+    .header-content .headerText h3 i {
+      margin-right: 0.5em;
+    }
+  }
+</style>
+
+<!-- Script 区域 -->
+<script>
+  class ParallaxHeader {
+    constructor() {
+      this.parallaxBg = document.querySelector(".parallaxbg");
+      this.girl = document.querySelector(".girl");
+      this.headerContent = document.querySelector(".header-content");
+      this.rafId = null;
+      this.lastMove = { x: 0, y: 0 };
+      this.bgImageUrl = "${headerData.bgImage}";
+      this.girlImageUrl = "${headerData.girlImage}";
+    }
+
+    init() {
+      // 等待图片加载完成
+      const loadImage = (url) => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.src = url;
+          img.onload = resolve;
+          img.onerror = reject;
+        });
+      };
+
+      Promise.all([
+        loadImage(this.bgImageUrl),
+        loadImage(this.girlImageUrl)
+      ]).then(() => {
+        // 图片加载完成后触发高度动画
+        if (this.headerContent) {
+          setTimeout(() => {
+            this.headerContent.style.setProperty("--header-height", "80vh");
+          }, 0);
+        }
+      }).catch((error) => {
+        console.error("图片加载失败:", error);
+        // 即使图片加载失败，也触发高度动画
+        if (this.headerContent) {
+          setTimeout(() => {
+            this.headerContent.style.setProperty("--header-height", "80vh");
+          }, 0);
+        }
+      });
+
+      // 初始化视差效果
+      if (this.parallaxBg) {
+        this.applyParallax(this.parallaxBg, {
+          intensity: 0.5,
+          center: true,
+          axis: "xy",
+        });
+      }
+
+      if (this.girl) {
+        this.applyParallax(this.girl, {
+          intensity: 0.05,
+          center: false,
+          axis: "x",
+        });
+      }
+    }
+
+    applyParallax(element, options = {}) {
+      const config = {
+        intensity: 0.1,
+        center: false,
+        axis: "xy",
+        ...options,
+      };
+
+      if (!element || !(element instanceof HTMLElement)) {
+        console.error("无效的元素");
+        return;
+      }
+
+      const initialTransform = window.getComputedStyle(element).transform;
+      const initialPosition = {
+        left: element.style.left,
+        top: element.style.top,
+        bottom: element.style.bottom,
+      };
+
+      const updatePosition = () => {
+        const max = this.getMaxMovement(element);
+        const moveX = config.axis.includes("x")
+          ? this.lastMove.x * max.x * config.intensity
+          : 0;
+        const moveY = config.axis.includes("y")
+          ? this.lastMove.y * max.y * config.intensity
+          : 0;
+
+        let transform = initialTransform === "none" ? "" : initialTransform;
+        if (config.center) {
+          transform = `translate(-50%, -50%) translate(${-moveX}px, ${-moveY}px)`;
+        } else {
+          transform += ` translate(${-moveX}px, ${-moveY}px)`;
+        }
+        element.style.transform = transform;
+        this.rafId = null;
+      };
+
+      const handleMove = (e) => {
+        const clientX = e.clientX ?? e.touches?.[0]?.clientX;
+        const clientY = e.clientY ?? e.touches?.[0]?.clientY;
+
+        if (clientX === undefined || clientY === undefined) return;
+
+        this.lastMove = {
+          x: (clientX / window.innerWidth - 0.5) * 2,
+          y: (clientY / window.innerHeight - 0.5) * 2,
+        };
+
+        if (!this.rafId) {
+          this.rafId = requestAnimationFrame(updatePosition);
+        }
+      };
+
+      const handleResize = () => {
+        if (this.rafId) cancelAnimationFrame(this.rafId);
+        updatePosition();
+      };
+
+      window.addEventListener("mousemove", handleMove);
+      window.addEventListener("touchmove", handleMove, { passive: true });
+      window.addEventListener("resize", handleResize);
+
+      this.cleanup = () => {
+        window.removeEventListener("mousemove", handleMove);
+        window.removeEventListener("touchmove", handleMove);
+        window.removeEventListener("resize", handleResize);
+        if (this.rafId) cancelAnimationFrame(this.rafId);
+        element.style.transform = initialTransform;
+      };
+    }
+
+    getMaxMovement(element) {
+      const parent = element.parentElement || document.documentElement;
+      return {
+        x: (element.offsetWidth - parent.offsetWidth) / 2,
+        y: (element.offsetHeight - parent.offsetHeight) / 2,
+      };
+    }
+
+    destroy() {
+      if (this.cleanup) this.cleanup();
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const parallaxHeader = new ParallaxHeader();
+    parallaxHeader.init();
+  });
+</script>
