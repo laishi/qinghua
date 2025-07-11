@@ -649,21 +649,8 @@ const gridData = templates.slice(0, num)
       }
 
     }
-
     reconfig() {
-      if (this.rootUrl.includes("temp.html")) {
-        const endGrid = this.detailGrids.querySelector(".enddetailGrid");
-        if (endGrid) {
-          endGrid.innerHTML =
-            '<a href="/" aria-label="Back to home"> < 回到首页 </a>';
-        }
-      }
-      if (this.rootUrl.includes("pages")) {
-        const headerTitle = document.querySelector(".header-content");
-        if (headerTitle) {
-          headerTitle.style.height = "30vh";
-        }
-      }
+      this.cicleloaderContainer.innerHTML = '';
     }
  
     bindEvents() {
