@@ -68,9 +68,7 @@ const gridData = templates.slice(0, 50)
     <HeaderParallax height="50vh">
         <Waves slot="waves" />
         <!-- <Menu slot="menu" /> -->
-    </HeaderParallax>
-
-  
+    </HeaderParallax> 
 
   <section id="temp">
     <div class="pageSlider">
@@ -570,8 +568,8 @@ const gridData = templates.slice(0, 50)
   class SliderDetailGrid {
     constructor() {
       this.rootUrl = window.location.origin + window.location.pathname;
-      this.tempPath = "./assets/qinghua-template/spa/";
-      this.tempLink = "./assets/pages/temp.html";
+      this.tempPath = "../assets/qinghua-template/spa/";
+      this.tempLink = "../assets/pages/temp.html";
       this.pageSlider = document.querySelector(".pageSlider");
       this.mainPage = document.querySelector(".mainPage");
       this.detailGrids = document.querySelector(".detailGrids");
@@ -634,10 +632,6 @@ const gridData = templates.slice(0, 50)
     reconfig() {
       this.cicleloaderContainer.innerHTML = '';
     }
-
-
-    
-
 
     bindEvents() {
       window.addEventListener("resize", () => this.reRow());
