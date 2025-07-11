@@ -6,8 +6,7 @@
   "dev": "astro dev",
   "build": "astro build",
   "preview": "astro preview",
-  "astro": "astro",
-  "deploy": "npm run build && gh-pages -d dist"
+  "astro": "astro"
 },
 
 "dependencies": {

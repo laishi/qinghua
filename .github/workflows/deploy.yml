@@ -3,32 +3,33 @@ name: Deploy Astro to GitHub Pages
 on:
   push:
     branches:
-      - main
+      - main  # 当 main 分支有推送时触发部署
 
 permissions:
-  contents: write
+  contents: write  # 允许写入 gh-pages 分支
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: 🧾 拉取源码
         uses: actions/checkout@v4
 
-      - name: Install Node
+      - name: 🧱 安装 Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install dependencies
-        run: npm install
+      - name: 📦 安装依赖
+        run: npm ci  # 推荐使用 ci，速度更快、结果更稳定
 
-      - name: Build Astro site
+      - name: 🔨 构建 Astro 项目
         run: npm run build
 
-      - name: Deploy to GitHub Pages
+      - name: 🚀 发布到 GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
-          cname: www.qinghua.cloud
+          publish_dir: ./dist  # 构建目录
+          cname: www.qinghua.cloud  # 自动生成 CNAME 文件
