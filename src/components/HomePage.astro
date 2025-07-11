@@ -51,15 +51,22 @@ const templates = [
 const tempPath = "./assets/qinghua-template/spa/";
 const tempLink = "./assets/pages/temp.html";
 const num = 23;
-// 根据页面决定显示全部还是前23个
-const gridData = templates.slice(0, num)
-  .map((template, index) => ({
+const linkmap = [];
+
+const gridData = templates.slice(0, num).map((template, index) => {
+  const linkurl = `${tempPath}${template.name}/index.html`;
+  linkmap.push(linkurl);  // 这里用 push，而不是 append
+  return {
     id: index,
-    linkurl: `${tempPath}${template.name}/index.html`,
+    linkurl,
     imgurl: `${tempPath}${template.name}/screenshot.png`,
     title: template.title,
     keywords: template.keywords,
-  }));
+  };
+});
+
+console.log(linkmap);
+
 
 ---
 
