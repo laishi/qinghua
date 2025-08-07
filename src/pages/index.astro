@@ -1,8 +1,37 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import HomePage from '../components/HomePage.astro';
+import Layout from "../layouts/Layout.astro";
+import HomePage from "../components/HomePage.astro";
+
+/* 数据区 */
+const data = {
+  resources: {
+    css: [],
+    js: ["/assets/js/lenis.min.js"],
+  },
+};
 ---
 
 <Layout title="青花卓越首页">
   <HomePage />
 </Layout>
+
+{data.resources.css.map((src) => <link rel="stylesheet" href={src} />)}
+{data.resources.js.map((src) => <script src={src} />)}
+
+
+
+<!-- 脚本区 -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {  
+      // Initialize Lenis
+      const lenis = new Lenis({
+      autoRaf: true,
+      });
+
+      // Listen for the scroll event and log the event data
+      lenis.on('scroll', (e) => {
+      // console.log(e);
+      });
+  });
+
+</script>
