@@ -4,106 +4,93 @@ import HomePage from "../components/HomePage.astro";
 
 <!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<head>
+    <!-- 基础元数据 -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="renderer" content="webkit"> <!-- 优先使用极速内核（国内浏览器） -->
 
-    <title>重庆网站建设_网站开发_SEO优化 - 青花卓越(qinghua.cloud)</title>
-    <meta name="keywords" content="重庆网站建设,重庆网站开发,重庆企业建站,重庆SEO优化,重庆响应式网站,qinghua.cloud" />
-    <meta name="description" content="青花卓越(qinghua.cloud)专注重庆本地企业网站建设，提供低价快速建站、百度SEO优化、响应式设计服务，3天上线，助力中小企业数字化转型。" />
+    <!-- 标题与关键词（符合百度分词规则） -->
+    <title>重庆网站建设公司 18883919122 | 快速建站+SEO优化 | 青花卓越(qinghua.cloud)</title>
+    <meta name="keywords" content="重庆网站建设,重庆做网站,重庆企业建站,重庆SEO优化,重庆响应式网站,营销型网站,网站设计,网站开发,网站优化,网站维护,青花卓越" />
+    <meta name="description" content="【青花卓越】重庆本地专业网站建设公司，3天快速上线！提供企业官网设计、营销型网站开发、百度SEO优化及移动端适配服务，立足本地化网站运营，电话：18883919122" />
 
-    <!-- 搜索引擎相关设置 -->
-    <meta name="robots" content="index,follow" />
-    <link rel="canonical" href="https://www.qinghua.cloud/" />
+    <!-- 搜索引擎指令 -->
+    <meta name="robots" content="index,follow,max-image-preview:large">
+    <meta name="applicable-device" content="pc,mobile"> <!-- 百度设备适配声明 -->
+    <meta name="mobile-agent" content="format=html5;url=https://www.qinghua.cloud"> <!-- 百度移动适配 -->
 
-    <!-- 地理位置元数据 -->
-    <meta name="geo.region" content="CN-CQ" />
-    <meta name="geo.placename" content="重庆市渝中区" />
-    <meta name="geo.position" content="29.5567;106.5528" />
-    <meta name="ICBM" content="29.5567, 106.5528" />
+    <!-- 地域定位（加强本地服务权重） -->
+    <meta name="location" content="province=重庆; city=重庆市; coord=106.5528,29.5567">
+    <meta name="geo.placename" content="重庆市渝中区">
+    <meta name="ICBM" content="29.5567, 106.5528">
 
-    <!-- 网站身份信息 -->
-    <meta name="author" content="青花卓越网站建设" />
-    <meta name="copyright" content="©2024 青花卓越(qinghua.cloud)" />
-    <meta name="theme-color" content="#ffffff" />
+    <!-- 品牌标识 -->
+    <meta name="author" content="重庆青花卓越网络科技有限公司">
+    <meta name="copyright" content="重庆青花卓越">
+    <meta name="theme-color" content="#2b7cff">
 
-    <!-- 图标相关 -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/icons/apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/icons/favicon-32x32.png" />
-    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/icons/favicon-16x16.png" />
-    <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/icons/favicon-96x96.png" />
-    <link rel="shortcut icon" href="/assets/images/icons/favicon.ico" />
-    <meta name="msapplication-TileColor" content="#ffffff" />
-    <meta name="msapplication-TileImage" content="/assets/images/icons/mstile-150x150.png" />
+    <!-- 图标优化（百度重视Favicon） -->
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 
-    <!-- Open Graph for 微信/QQ 分享预览 -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="重庆网站建设_网站开发_SEO优化 - 青花卓越(qinghua.cloud)" />
-    <meta property="og:description" content="青花卓越(qinghua.cloud)专注重庆本地企业网站建设，提供快速上线、SEO优化与响应式设计。" />
-    <meta property="og:image" content="https://www.qinghua.cloud/assets/images/logo/qinghua-logo1024.png" />
-    <meta property="og:url" content="https://www.qinghua.cloud" />
-    <meta property="og:site_name" content="青花卓越" />
+    <!-- 百度站长验证（建议添加） -->
+    <meta name="baidu-site-verification" content="你的百度验证码">
 
-    <!-- Twitter Cards -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="重庆网站建设_网站开发_SEO优化 - 青花卓越(qinghua.cloud)" />
-    <meta name="twitter:description" content="青花卓越专注重庆本地网站建设与优化，为企业提供高效建站解决方案。" />
-    <meta name="twitter:image" content="https://www.qinghua.cloud/assets/images/logo/qinghua-logo1024.png" />
+    <!-- 国内社交平台分享优化 -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="重庆网站建设公司 | 青花卓越(qinghua.cloud)">
+    <meta property="og:description" content="重庆本地专业网站建设服务，3天快速上线，咨询电话：136-4056-6324">
+    <meta property="og:image" content="https://www.qinghua.cloud/assets/images/social-share.jpg">
+    <meta property="og:url" content="https://www.qinghua.cloud">
+    <meta property="og:site_name" content="青花卓越网站建设">
 
-    <!-- JSON-LD 结构化数据 -->
+    <!-- 微信/QQ分享特殊处理 -->
+    <meta itemprop="name" content="重庆网站建设公司 | 青花卓越">
+    <meta itemprop="image" content="https://www.qinghua.cloud/assets/images/wechat-share.jpg">
+    <meta name="wechat:miniprogram" content="青花卓越小程序">
+
+    <!-- 结构化数据（百度、360均支持） -->
     <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "LocalBusiness",
-        "name": "青花卓越网站建设",
-        "alternateName": "qinghua.cloud",
-        "image": "https://www.qinghua.cloud/assets/images/logo/qinghua-logo1024.png",
-        "@id": "https://www.qinghua.cloud",
-        "url": "https://www.qinghua.cloud",
-        "telephone": "13640566324",
-        "priceRange": "¥",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "重庆市渝中区",
-          "addressLocality": "重庆",
-          "addressRegion": "CQ",
-          "postalCode": "400000",
-          "addressCountry": "CN"
-        },
-        "openingHoursSpecification": {
-          "@type": "OpeningHoursSpecification",
-          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-          "opens": "09:00",
-          "closes": "18:00"
-        },
-        "hasOfferCatalog": {
-          "@type": "OfferCatalog",
-          "name": "网站建设服务",
-          "itemListElement": [
-            {
-              "@type": "Offer",
-              "name": "企业展示型网站",
-              "itemOffered": {
-                "@type": "Service",
-                "name": "响应式企业网站"
-              }
-            },
-            {
-              "@type": "Offer",
-              "name": "营销型网站",
-              "itemOffered": {
-                "@type": "Service",
-                "name": "SEO优化网站"
-              }
-            }
-          ]
+    {
+      "@context": "https://ziyuan.baidu.com/contexts/cambrian.jsonld",
+      "@id": "https://www.qinghua.cloud",
+      "appid": "你的百度小程序ID",
+      "title": "重庆网站建设公司 | 青花卓越",
+      "description": "专业重庆网站建设服务",
+      "images": ["https://www.qinghua.cloud/assets/images/logo.jpg"],
+      "pubDate": "2024-03-20T09:00:00",
+      "upDate": "2024-06-15T09:00:00",
+      "service": {
+        "@type": "ProductService",
+        "name": "网站建设",
+        "serviceType": "企业官网/营销型网站",
+        "areaServed": "重庆市",
+        "provider": {
+          "@type": "Organization",
+          "name": "青花卓越"
         }
       }
+    }
     </script>
 
-    <link rel="stylesheet" href="/assets/font/fontawesome/css/all.min.css" />
-    <base href="/">
-  </head>
+    <!-- 百度统计代码（建议放置于head顶部） -->
+    <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?你的统计ID";
+      var s = document.getElementsByTagName("script")[0]; 
+      s.parentNode.insertBefore(hm, s);
+    })();
+    </script>
+
+    <!-- 预加载关键资源（提升速度评分） -->
+    <link rel="preload" href="/assets/css/main.css" as="style">
+    <link rel="preload" href="/assets/js/main.js" as="script">
+</head>
   <body>
     <HomePage />
   </body>

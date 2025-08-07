@@ -1,4 +1,6 @@
 ---
+import PanolensViewer from './PanolensViewer.astro';
+
 const { height = "80vh", title = "青花卓越" } = Astro.props;
 
 const headerData = {
@@ -13,6 +15,14 @@ const headerData = {
   bgImage: "/assets/images/bg.png",
   girlImage: "/assets/images/girl.png",
 };
+
+// const panoramaImage = "https://raw.githubusercontent.com/pchen66/panolens.js/dev/example/asset/textures/equirectangular/sunset.jpg";
+// const panoramaImage = "";
+// const panoramaImage = "";
+// const panoramaImage = "";
+const panoramaImage = "https://cdn.polyhaven.com/asset_img/primary/stierberg_sunrise.png?height=2048&quality=95";
+
+
 ---
 
 <div
@@ -22,18 +32,18 @@ const headerData = {
   data-bg={headerData.bgImage}
   data-girl={headerData.girlImage}
 >
-  <div
-    class="parallaxbg"
-    style={`background-image: linear-gradient(60deg, rgba(36, 23, 87, 0.9), rgba(10, 87, 97, 0.8)), url(${headerData.bgImage})`}
-  >
+  <div class="parallaxbgs" style="position: absolute; width: 100%; height: 100%; top: 50%; left: 50%; transform: translate(-50%, -50%); will-change: transform;">
+    <PanolensViewer
+      image={panoramaImage}
+      data-image={panoramaImage}
+    />
   </div>
-  <div class="girl" style={`background-image: url(${headerData.girlImage})`}>
-  </div>
+  <div class="girl" style={`background-image: url(${headerData.girlImage})`}></div>
 
   <div class="header-title">
     <a href="/" class="logo-link">
       <div class="headerLogo">
-        <img src={headerData.logo} alt={headerData.title} />
+        <img src={headerData.logo} alt={headerData.title} loading="eager" />
         <h1 class="logoText">{headerData.title}</h1>
       </div>
     </a>
@@ -47,18 +57,17 @@ const headerData = {
     </div>
   </div>
 
-  <slot name="waves" />
   <slot name="menu" />
+  <slot name="waves" />
 </div>
 
 <style>
-
   a {
     text-decoration: none;
     color: inherit;
     outline: none;
     cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
+    /* -webkit-tap-highlight-color: transparent; */
   }
 
   a:focus {
@@ -82,8 +91,6 @@ const headerData = {
     position: absolute;
     width: 110%;
     height: 110%;
-    background-size: cover;
-    background-position: center;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -112,7 +119,6 @@ const headerData = {
     position: absolute;
     width: 100%;
     height: var(--header-height);
-    background-color: rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -120,9 +126,9 @@ const headerData = {
     padding-top: 2em;
     opacity: 0;
     transition: opacity 1s ease;
+    z-index: 10;
   }
 
- 
   .headerLogo {
     width: 5em;
     height: 5em;
@@ -145,9 +151,8 @@ const headerData = {
     line-height: 1em;
     margin: 0.3em 0;
   }
-  
+
   .headerText p {
-    opacity: 1.2;
     opacity: 0.5;
   }
 
@@ -155,7 +160,6 @@ const headerData = {
     margin-top: 1em;
     font-size: 1.2em;
   }
-
 
   @property --＠color-1 {
     syntax: "<color>";
@@ -207,94 +211,103 @@ const headerData = {
       margin-right: 0.5em;
     }
   }
-
 </style>
 
 <script>
-  class ParallaxHeader {
-    constructor() {
-      this.header = document.querySelector(".header-content");
-      this.headerHeight = this.header?.dataset?.height;
-      this.headerTitle = document.querySelector(".header-title");
+  function initializeParallaxHeader() {
+    // 使用局部变量，避免全局作用域问题
+    const header = document.querySelector(".header-content");
+    const headerHeight = header?.dataset?.height || "80vh";
+    const headerTitle = document.querySelector(".header-title");
+    const bgUrl = header?.dataset?.bg || "";
+    const girlUrl = header?.dataset?.girl || "";
+    const parallaxBg = document.querySelector(".parallaxbg");
+    const girl = document.querySelector(".girl");
+    let rafId = null;
+    let lastMove = { x: 0, y: 0 };
+    let cleanup = null;
 
-      this.bgUrl = this.header?.dataset?.bg;
-      this.girlUrl = this.header?.dataset?.girl;
-      this.parallaxBg = document.querySelector(".parallaxbg");
-      this.girl = document.querySelector(".girl");
-      this.rafId = null;
-      this.lastMove = { x: 0, y: 0 };
-    }
-
-    loadImage(url) {
+    const loadImage = (url) => {
       return new Promise((resolve, reject) => {
         const img = new Image();
         img.src = url;
-        img.onload = resolve;
-        img.onerror = reject;
+        img.loading = "eager"; // 强制立即加载
+        img.onload = () => resolve();
+        img.onerror = () => reject();
       });
-    }
+    };
 
-    async init() {
+    const init = async () => {
+      // 检查 header 是否存在
+      if (!header) {
+        console.error("未找到 .header-content 元素");
+        return;
+      }
+
       try {
         await Promise.all([
-          this.loadImage(this.bgUrl),
-          this.loadImage(this.girlUrl),
-        ]);
-      } catch (err) {
-        console.warn("图片加载失败，但仍继续动画");
-      }
+          loadImage(bgUrl),
+          loadImage(girlUrl),
+        ]).catch((err) => {
+          console.warn("图片加载失败，但继续执行动画:", err);
+        });
 
-      if (this.header) {
+        // 设置 header 高度和标题透明度
         setTimeout(() => {
-          this.header.style.setProperty("--header-height", this.headerHeight);
-          this.headerTitle.style.opacity = 1;
+          header.style.setProperty("--header-height", headerHeight);
+          if (headerTitle) {
+            headerTitle.style.opacity = "1";
+          } else {
+            console.warn("未找到 .header-title 元素");
+          }
         }, 300);
-      }
 
-      if (this.parallaxBg) {
-        this.applyParallax(this.parallaxBg, {
-          intensity: 0.5,
-          center: true,
-          axis: "xy",
-        });
-      }
+        // 对 parallaxBg 应用视差效果
+        if (parallaxBg) {
+          applyParallax(parallaxBg, {
+            intensity: 0.1, // 降低强度，测试 WebGL 兼容性
+            center: true,
+            axis: "xy",
+          });
+        } else {
+          console.warn("未找到 .parallaxbg 元素");
+        }
 
-      if (this.girl) {
-        this.applyParallax(this.girl, {
-          intensity: 0.05,
-          center: false,
-          axis: "x",
-        });
+        // 对 girl 应用视差效果
+        if (girl) {
+          applyParallax(girl, {
+            intensity: 0.05,
+            center: false,
+            axis: "x",
+          });
+        } else {
+          console.warn("未找到 .girl 元素");
+        }
+      } catch (err) {
+        console.error("初始化失败:", err);
       }
-    }
+    };
 
-    applyParallax(element, options = {}) {
-      const config = Object.assign(
-        {
-          intensity: 0.1,
-          center: false,
-          axis: "xy",
-        },
-        options,
-      );
+    const applyParallax = (element, options = {}) => {
+      const config = {
+        intensity: options.intensity || 0.1,
+        center: options.center || false,
+        axis: options.axis || "xy",
+      };
 
       const initialTransform = window.getComputedStyle(element).transform;
 
       const updatePosition = () => {
-        const max = this.getMaxMovement(element);
-        const moveX = config.axis.includes("x")
-          ? this.lastMove.x * max.x * config.intensity
-          : 0;
-        const moveY = config.axis.includes("y")
-          ? this.lastMove.y * max.y * config.intensity
-          : 0;
+        const max = getMaxMovement(element);
+        const moveX = config.axis.includes("x") ? lastMove.x * max.x * config.intensity : 0;
+        const moveY = config.axis.includes("y") ? lastMove.y * max.y * config.intensity : 0;
 
         let transform = config.center
           ? `translate(-50%, -50%) translate(${-moveX}px, ${-moveY}px)`
           : `${initialTransform} translate(${-moveX}px, ${-moveY}px)`;
 
         element.style.transform = transform;
-        this.rafId = null;
+        rafId = null;
       };
 
       const handleMove = (e) => {
@@ -302,40 +315,48 @@ const headerData = {
         const clientY = e.clientY ?? e.touches?.[0]?.clientY;
         if (clientX == null || clientY == null) return;
 
-        this.lastMove = {
+        lastMove = {
           x: (clientX / window.innerWidth - 0.5) * 2,
           y: (clientY / window.innerHeight - 0.5) * 2,
         };
 
-        if (!this.rafId) this.rafId = requestAnimationFrame(updatePosition);
+        if (!rafId) rafId = requestAnimationFrame(updatePosition);
       };
 
-      window.addEventListener("mousemove", handleMove);
+      window.addEventListener("mousemove", handleMove, { passive: true });
       window.addEventListener("touchmove", handleMove, { passive: true });
 
-      this.cleanup = () => {
+      cleanup = () => {
         window.removeEventListener("mousemove", handleMove);
         window.removeEventListener("touchmove", handleMove);
-        if (this.rafId) cancelAnimationFrame(this.rafId);
+        if (rafId) cancelAnimationFrame(rafId);
         element.style.transform = initialTransform;
       };
-    }
+    };
 
-    getMaxMovement(element) {
+    const getMaxMovement = (element) => {
       const parent = element.parentElement || document.documentElement;
       return {
         x: (element.offsetWidth - parent.offsetWidth) / 2,
         y: (element.offsetHeight - parent.offsetHeight) / 2,
       };
-    }
+    };
 
-    destroy() {
-      if (this.cleanup) this.cleanup();
-    }
+    const destroy = () => {
+      if (cleanup) cleanup();
+    };
+
+    // 执行初始化
+    init();
+    return { destroy };
   }
 
+  // 确保 DOM 加载完成后再初始化
   document.addEventListener("DOMContentLoaded", () => {
-    const ph = new ParallaxHeader();
-    ph.init();
+    try {
+      initializeParallaxHeader();
+    } catch (err) {
+      console.error("ParallaxHeader 初始化失败:", err);
+    }
   });
 </script>

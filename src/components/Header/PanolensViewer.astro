@@ -1,0 +1,134 @@
+---
+/* 组件说明 */
+const componentName = "PanolensViewer";
+const componentDescription = "基于 Panolens.js 的全景图查看器，支持 360 度全景图片展示，自动旋转和交互控制，可通过 cameraFov 调整摄像机焦距（拉近或拉远）。";
+
+const { 
+  image = "https://raw.githubusercontent.com/pchen66/panolens.js/dev/example/asset/textures/equirectangular/sunset.jpg", 
+  class: className = "", 
+  style = "",
+  cameraFov = 100
+} = Astro.props;
+
+/* 资源 */
+const resources = {
+  scripts: [
+    "https://cdn.jsdelivr.net/npm/three@0.105.2/build/three.min.js",
+    "https://cdn.jsdelivr.net/npm/panolens@0.12.0/build/panolens.min.js"
+  ]
+};
+---
+
+<!-- HTML -->
+<div class={className} style={style} data-image={image} data-camera-fov={cameraFov}>
+  <div class="PanolensViewer">
+    <div class="panolens-container"></div>
+  </div>
+
+  {resources.scripts.map(src => (
+    <script src={src} defer></script>
+  ))}
+</div>
+
+<!-- 样式 -->
+<style scoped>
+.PanolensViewer {
+  width: 100%;
+  height: 80vh;
+  position: absolute;
+  overflow: hidden;
+}
+
+.PanolensViewer * {
+  box-sizing: border-box;
+}
+
+.PanolensViewer .panolens-container {
+  width: 100%;
+  height: 80vh;
+}
+</style>
+
+<!-- 脚本 -->
+<script>
+class PanolensViewer {
+  constructor(config = {}) {
+    this.containerSelector = config.containerSelector || '.PanolensViewer';
+    this.image = config.image || 'https://raw.githubusercontent.com/pchen66/panolens.js/dev/example/asset/textures/equirectangular/sunset.jpg';
+    this.cameraFov = parseFloat(config.cameraFov) || 75;
+    this.autoRotate = config.autoRotate !== undefined ? config.autoRotate : true;
+    this.controlBar = config.controlBar !== undefined ? config.controlBar : true;
+    this.viewer = null;
+    this.init();
+  }
+
+  async init() {
+    const container = document.querySelector(`${this.containerSelector} .panolens-container`);
+    if (!container) {
+      console.error('全景容器未找到:', this.containerSelector);
+      return;
+    }
+
+    try {
+      await this.waitForScripts();
+      this.initializeViewer(container);
+    } catch (err) {
+      console.error('初始化全景查看器失败:', err);
+    }
+  }
+
+  async waitForScripts() {
+    return new Promise((resolve) => {
+      const checkScripts = () => {
+        if (typeof window.PANOLENS !== 'undefined' && typeof window.THREE !== 'undefined') {
+          resolve();
+        } else {
+          setTimeout(checkScripts, 100);
+        }
+      };
+      checkScripts();
+    });
+  }
+
+  initializeViewer(container) {
+    try {
+      const panorama = new window.PANOLENS.ImagePanorama(this.image);
+      this.viewer = new window.PANOLENS.Viewer({
+        container,
+        autoRotate: this.autoRotate,
+        controlBar: this.controlBar
+      });
+
+      // 设置摄像机焦距（FOV）
+      if (this.viewer.camera) {
+        this.viewer.camera.fov = this.cameraFov; // 调整焦距，较大值拉近，较小值拉远
+        this.viewer.camera.updateProjectionMatrix();
+      }
+
+      this.viewer.add(panorama);
+    } catch (err) {
+      console.error('初始化全景查看器失败:', err);
+    }
+  }
+
+  destroy() {
+    if (this.viewer) {
+      this.viewer.dispose();
+      this.viewer = null;
+    }
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const panolensElements = document.querySelectorAll('.PanolensViewer');
+  panolensElements.forEach((element) => {
+    const parent = element.parentElement;
+    const config = {
+      containerSelector: '.PanolensViewer',
+      image: parent?.getAttribute('data-image') || '',
+      cameraFov: parent?.getAttribute('data-camera-fov') || '75'
+    };
+    new PanolensViewer(config);
+  });
+});
+</script>
