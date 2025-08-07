@@ -6,12 +6,13 @@ import netlify from '@astrojs/netlify';
 export default defineConfig({
   // 基础配置
   site: 'https://www.qinghua.cloud',
+
   base: '/',
   outDir: 'dist',
-  
+
   // 输出模式（静态或服务端渲染）
-  output: 'static', // 或 'server'（若需 SSR）
-  adapter: netlify(), // Netlify 适配器
+  // 或 'server'（若需 SSR）
+  output: 'static',
 
   // 集成插件
   integrations: [
@@ -23,5 +24,7 @@ export default defineConfig({
         lastmod: new Date().toISOString()
       })
     })
-  ]
+  ],
+
+  adapter: netlify()
 });
