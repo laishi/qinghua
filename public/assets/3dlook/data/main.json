@@ -1,0 +1,238 @@
+{
+    "projects": [
+        {
+            "id": "x50",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "lifan x50",
+            "gridImg": "assets/img/x50.png",
+            "url": "/case/x50/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf3201"
+        },
+        {
+            "id": "i8",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "BMW I8",
+            "gridImg": "assets/img/i8.png",
+            "url": "/case/i8/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by grabcad",
+            "tint": "#cf5601"
+        },
+        {
+            "id": "moto",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "lifan moto",
+            "gridImg": "assets/img/moto.png",
+            "url": "/case/moto/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf3201"
+        },
+        {
+            "id": "iwatch",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "BMW iwatch",
+            "gridImg": "assets/img/iwatch.png",
+            "url": "/case/iwatch/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf5601"
+        },
+        {
+            "id": "nike",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "lifan nike",
+            "gridImg": "assets/img/nike.png",
+            "url": "/case/nike/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf3201"
+        },
+        {
+            "id": "ring",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "BMW ring",
+            "gridImg": "assets/img/ring.png",
+            "url": "/case/ring/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf5601"
+        },
+        {
+            "id": "shave",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "BMW shave",
+            "gridImg": "assets/img/shave.png",
+            "url": "/case/shave/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf5601"
+        },
+        {
+            "id": "zsfj",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "lifan zsfj",
+            "gridImg": "assets/img/zsfj.png",
+            "url": "/case/zsfj/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf3201"
+        },
+        {
+            "id": "x50",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "lifan x50",
+            "gridImg": "assets/img/x50.png",
+            "url": "/case/x50/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf3201"
+        },
+        {
+            "id": "i8",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "BMW I8",
+            "gridImg": "assets/img/i8.png",
+            "url": "/case/i8/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf5601"
+        },
+        {
+            "id": "moto",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "lifan moto",
+            "gridImg": "assets/img/moto.png",
+            "url": "/case/moto/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf3201"
+        },
+        {
+            "id": "iwatch",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "BMW iwatch",
+            "gridImg": "assets/img/iwatch.png",
+            "url": "/case/iwatch/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf5601"
+        },
+        {
+            "id": "nike",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "lifan nike",
+            "gridImg": "assets/img/nike.png",
+            "url": "/case/nike/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf3201"
+        },
+        {
+            "id": "ring",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "BMW ring",
+            "gridImg": "assets/img/ring.png",
+            "url": "/case/ring/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf5601"
+        },
+        {
+            "id": "shave",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "BMW shave",
+            "gridImg": "assets/img/shave.png",
+            "url": "/case/shave/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf5601"
+        },
+        {
+            "id": "zsfj",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "lifan zsfj",
+            "gridImg": "assets/img/zsfj.png",
+            "url": "/case/zsfj/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf3201"
+        },
+        {
+            "id": "zsfj",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "lifan zsfj",
+            "gridImg": "assets/img/zsfj.png",
+            "url": "/case/zsfj/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf3201"
+        },
+        {
+            "id": "glmg",
+            "type": "demo",
+            "deps": [
+                "webgl"
+            ],
+            "name": "BMW glmg",
+            "gridImg": "assets/img/glmg.png",
+            "url": "/case/glmg/index.html",
+            "contentUrl": "data/glass",
+            "info": "Power by 3DLook",
+            "tint": "#cf5601"
+        }
+    ]
+}
