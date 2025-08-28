@@ -3,12 +3,14 @@ import netlify from '@astrojs/netlify';
 import fs from 'fs';
 import path from 'path';
 
+import cloudflare from '@astrojs/cloudflare';
+
 export default defineConfig({
   site: 'https://www.qinghua.cloud',
   base: '/',
   outDir: 'dist',
   output: 'static',
-  adapter: netlify(),
+  adapter: cloudflare(),
 
   hooks: {
     'astro:build:done': async ({ outDir }) => {
@@ -28,3 +30,6 @@ export default defineConfig({
     },
   },
 });
+
+
+import { defineConfig } from 'astro/config';
